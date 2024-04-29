@@ -7,9 +7,12 @@ Nekustamā īpašuma nomas sistēma nodrošina platformu nekustamā īpašuma ī
 Lietotāju reģistrācija un autentifikācija: Lietotāji var izveidot kontus un pierakstīties sistēmā, lai piekļūtu platformas funkcijām.
 ### Nekustamā īpašuma pārskatīšana un nomas: Lietotāji var pārskatīt pieejamo nekustamā īpašuma sarakstu un nomāt to, nosūtot rezervācijas pieprasījumu.
 Piedāvājumu moderācija: Administrators pārbauda un moderē īpašnieku pievienotos piedāvājumus pirms to parādīšanās vietnē.
-### Čats: Lietotāji var sazināties ar nekustamā īpašuma īpašniekiem, izmantojot iebūvēto čatu, lai pārrunātu nomas nosacījumus.
-### Rezervāciju pārvaldīšana: Lietotāji var pārvaldīt savas rezervācijas, pārskatot rezervācijas statusu un atceļot tās pēc nepieciešamības.
-### Profila rediģēšana: Lietotāji var jebkurā laikā rediģēt savus profilus.
+### Čats: 
+Lietotāji var sazināties ar nekustamā īpašuma īpašniekiem, izmantojot iebūvēto čatu, lai pārrunātu nomas nosacījumus.
+### Rezervāciju pārvaldīšana: 
+Lietotāji var pārvaldīt savas rezervācijas, pārskatot rezervācijas statusu un atceļot tās pēc nepieciešamības.
+### Profila rediģēšana: 
+Lietotāji var jebkurā laikā rediģēt savus profilus.
 ## Administrācijas vadība:
 ### Piedāvājumu moderācija: 
 Administrators pārbauda un moderē īpašnieku pievienotos piedāvājumus.
