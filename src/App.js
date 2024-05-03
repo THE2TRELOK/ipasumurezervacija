@@ -9,7 +9,7 @@ import Popular from "./components/start/Popular";
 import { Router } from "react-router-dom";
 import Main from "./components/start/Main";
 import Profils from "./components/Profils";
-
+import Login from "./components/Login/Login";
 import { UserProvider, useUser } from "./components/UserContext"; 
 function App() {
   const { user } = useUser();
@@ -29,6 +29,7 @@ function App() {
           <Route path="/profils"
           element={user ? <Profils /> : <Navigate to="/" />}
           />
+          <Route path="/login" element={<Login/>}/>
       </Routes>
     </BrowserRouter>
     </UserProvider>
