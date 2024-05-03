@@ -1,0 +1,447 @@
+* {
+  font-family: "Source Sans Pro";
+  padding: 0;
+  margin: 0;
+}
+
+.scroll-bar {
+  overflow: hidden;
+}
+
+.hide {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+p {
+  font-size: 18px;
+}
+h2 {
+  font-size: 40px;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+ 
+.page-header-container {
+  margin-bottom: 70px;
+}
+
+.page-header-span {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 100px;
+}
+.page-header {
+  /* font-weight: 500; */
+  text-align: center;
+  padding: 0 150px 0 0;
+}
+
+.page-sub-header {
+  font-size: 75%;
+  text-align: center;
+  letter-spacing: 0.01em;
+  font-weight: 300;
+  color: #3b331a;
+}
+/* Header*/
+
+.book-container {
+  width: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("https://faili.liepaja.lv/Bildes/Kultura/IzgaismotaLiepaja-20201021-KarlisVolkovskis-85-1024x683.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.9;
+  min-height: calc(100vh - 12vh);
+  display: flex;
+  color: white;
+}
+
+.book-left {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 10%;
+}
+
+.book-left > * {
+  margin: 0.5rem;
+}
+
+.book-header {
+  text-transform: capitalize;
+}
+
+.book-right {
+  flex: 2;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  /* border: 1px solid white; */
+}
+
+.book-form {
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  width: 70%;
+  min-height: 60%;
+  border-radius: 5px;
+}
+.book-form p {
+  margin-bottom: 1em;
+  text-align: center;
+  font-size: 18px;
+}
+.book-form input {
+  outline: none;
+  width: 80%;
+  height: 2.5em;
+  padding: 0.5em;
+}
+
+.book-form button {
+  background: rgba(49, 49, 54, 0.993);
+  outline: none;
+  width: 80%;
+  padding: 0.5em;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  border: none;
+}
+
+.btn {
+  border-radius: 3px;
+  border: 1px solid #fff;
+  text-transform: uppercase;
+  font-size: 55%;
+  padding: 10px 18px;
+  font-weight: 400;
+  text-decoration: none;
+  transition: all 0.3s;
+  margin-right: 10px;
+}
+
+.btn-fill {
+  background-color: rgba(49, 49, 54, 0.993);
+  color: #fff;
+}
+.rates {
+  border-radius: 5px;
+}
+
+.rates:active,
+.rates:hover {
+  background-color: #c9a633;
+  border: 1px solid #c9a633;
+}
+
+.btn-fill:hover,
+.btn-fill:active {
+  background-color: #c9a633;
+  transform: translateY(-3px);
+  border: 1px solid #c9a633;
+}
+
+.btn-ghost {
+  color: #d4af37;
+  background-color: #fff;
+}
+
+.btn-ghost:hover,
+.btn-ghost:active {
+  background-color: #d4af37;
+  color: #fff;
+}
+
+:root {
+  font-size: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #fafafa;
+  font-size: 18px;
+}
+
+h4 {
+  font-style: normal;
+  font-weight: 600;
+  line-height: 162.69%;
+  color: #241e09;
+  padding: 5px 0;
+  font-size: 24px;
+}
+
+.container {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 1.5rem 0.5rem;
+}
+
+.btn-large {
+  font-size: 16px;
+  width: 133px;
+  padding: 12px 22px;
+  border-radius: 4px;
+}
+
+/*  review */
+.review-container {
+  width: 80%;
+  margin: 1em auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.review-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.review-header > p {
+  text-align: center;
+}
+.cards-container {
+  display: flex;
+  margin-top: 2em;
+  margin-bottom: 4em;
+}
+.card {
+  flex: 1;
+  border: 1px solid rgb(158, 158, 158);
+  min-height: 40vh;
+  margin-right: 2em;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1em 1em 1em 1em;
+  line-height: 1.5em;
+}
+.card-title {
+  font-size: 25px;
+}
+.card-avi {
+  width: 30%;
+  margin: 2em 0;
+}
+.card-subtitle {
+  margin-bottom: 1em;
+}
+.card-desc {
+  font-size: 18px;
+  font-weight: 300;
+}
+
+/*-------------------------------------------------------*/
+@media only screen and (max-width: 600px) {
+  .image-col {
+    margin: auto;
+  }
+  .book-container {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .book-left {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .book-header {
+    font-size: 30px;
+    text-align: center;
+  }
+
+  .book-header br {
+    display: none;
+  }
+
+  .page-header {
+    text-align: center;
+    padding: 1rem;
+    font-size: 30px;
+  }
+  .cards-container {
+    flex-direction: column;
+  }
+  .card {
+    margin-bottom: 1em;
+  }
+  .page-header:after {
+    margin: 0.5em auto 0 auto;
+    height: 2px;
+  }
+
+  .page-header-container {
+    margin-bottom: 10px;
+  }
+  .btn-large {
+    margin-bottom: 1em;
+    margin: auto;
+    font-weight: 700;
+    font-size: 77%;
+    padding: 15px 27px;
+  }
+
+  .horizontal {
+    margin: 1em auto 2em auto;
+  }
+  .book-form {
+    width: 90%;
+    margin: 1em auto;
+    padding: 1em 0.5em;
+  }
+
+  .book-form h3 {
+    font-size: 20px;
+    text-align: center;
+  }
+  .book-form p {
+    font-size: 17px;
+  }
+
+  .book-form p br {
+    display: none;
+  }
+  .book-left p {
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1em;
+  }
+
+  .book-right .book-left,
+  .book-right {
+    flex: 1;
+  }
+  .book-form button {
+    margin-bottom: 1em;
+  }
+
+  .page-header {
+    text-transform: capitalize;
+    text-align: center;
+  }
+
+  .review-title {
+    text-align: center;
+    font-size: 30px;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .card-avi {
+    width: 30%;
+    display: block;
+    margin: 1.5rem auto;
+  }
+
+  .card-title,
+  .card-subtitle {
+    width: 100%;
+    text-align: center;
+  }
+
+  .card-subtitle {
+    font-weight: 300;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .small-image {
+    display: none;
+  }
+
+  .large-image {
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 700px) {
+  .book-container {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+  .btn-large {
+    margin: 0.5em auto 1em 1em;
+  }
+  .book-form {
+    width: 100%;
+    margin: 1em auto;
+    padding: 1em 0.5em;
+  }
+
+  .page-header {
+    padding: 0 100px 0 100px;
+  }
+
+  .card {
+    margin-bottom: 1em;
+  }
+  .page-header:after {
+    margin: 0.5em auto 0 auto;
+  }
+  .btn-large {
+    margin-bottom: 1em;
+  }
+  .book-left h1 {
+    font-size: 50px;
+    margin-top: 1em;
+  }
+  .horizontal {
+    margin: 1em auto 2em auto;
+  }
+}
+@media only screen and (min-width: 700px) {
+  .book-form {
+    margin: 1em 0;
+  }
+  .book-form h3 {
+    padding-top: 1em;
+    font-size: 25px;
+    text-align: center;
+  }
+  .book-form p {
+    font-size: 18px;
+  }
+
+  .rates {
+    margin-bottom: 1em;
+  }
+}
+@media only screen and (min-width: 954px) {
+  .book-container {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+  }
+}
