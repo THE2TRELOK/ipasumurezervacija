@@ -9,6 +9,7 @@ import Link from "@mui/material/Link";
 import HomeIcon from "@mui/icons-material/Home";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -23,6 +24,7 @@ import {
 } from "firebase/auth";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router";
+import { Padding } from "@mui/icons-material";
 function Copyright(props) {
   return (
     <Typography
@@ -132,9 +134,11 @@ export default function Login() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      
       {contextHolder}
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
+        
         <Grid
           item
           xs={false}
@@ -151,7 +155,13 @@ export default function Login() {
             backgroundPosition: "center",
           }}
         />
+        
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Button onClick={handleMainClick}>
+                <ArrowBackIcon 
+                style={{margin:"10px 10px"}}
+                />
+              </Button>
           <Box
             sx={{
               my: 8,
@@ -161,11 +171,8 @@ export default function Login() {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1 }}>
-              <Button onClick={handleMainClick}>
-                <HomeIcon />
-              </Button>
-            </Avatar>
+            
+           
             <Tabs
               defaultActiveKey="1"
               items={items}
