@@ -156,7 +156,7 @@ export default function Login() {
           }}
         />
         
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square >
         <Button onClick={handleMainClick}>
                 <ArrowBackIcon 
                 style={{margin:"10px 10px"}}
@@ -197,6 +197,7 @@ export default function Login() {
                 autoComplete="email"
                 autoFocus
                 onChange={(e) => setEmail(e.target.value)}
+                sx={{ mb: 1 }}
               />
               <TextField
                 margin="normal"
@@ -207,6 +208,7 @@ export default function Login() {
                 type="password"
                 autoComplete="current-password"
                 onChange={(e) => setPassword(e.target.value)}
+                sx={{ mb: 1 }}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
@@ -228,7 +230,7 @@ export default function Login() {
                 e.preventDefault();
                 handleRegister();
               }}
-              sx={{ mt: 1, display: activeTab === "3" ? "block" : "none" }}
+              sx={{ width:735, mt: 1, display: activeTab === "3" ? "block" : "none" }}
             >
               {/* Registration Form */}
               <TextField
@@ -241,6 +243,7 @@ export default function Login() {
                 name="namee"
                 autoComplete="given-name"
                 autoFocus={activeTab === "3"}
+                sx={{ mb: 1 }}
               />
               <TextField
                 margin="normal"
@@ -251,6 +254,7 @@ export default function Login() {
                 label="Uzvards"
                 name="surname"
                 autoComplete="family-name"
+                sx={{ mb: 1 }}
               />
               <TextField
                 margin="normal"
@@ -261,6 +265,7 @@ export default function Login() {
                 label="Epasta Adrese"
                 name="email"
                 autoComplete="email"
+                sx={{ mb: 1 }}
               />
               <TextField
                 margin="normal"
@@ -272,6 +277,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"
+                sx={{ mb: 1 }}
               />
               <Button
                 type="submit"
@@ -282,14 +288,7 @@ export default function Login() {
                 Registreties
               </Button>
             </Box>
-            <Grid container>
-              <Grid item xs>
-                {/* <Link href="#" variant="/">
-                  Aizmirsat paroli??
-                </Link> */}
-              </Grid>
-              <Grid item></Grid>
-            </Grid>
+           
             <Copyright sx={{ mt: 5 }} />
           </Box>
         </Grid>
