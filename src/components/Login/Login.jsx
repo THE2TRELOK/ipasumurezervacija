@@ -6,21 +6,20 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from "@mui/icons-material/Home";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import { Tabs, message } from "antd";
 import { auth, db } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import liepaja from "./Liepaja.jpg";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
 } from "firebase/auth";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router";
@@ -53,7 +52,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
-  
+
   const handleMainClick = () => {
     navigate("/");
   };
@@ -102,7 +101,7 @@ export default function Login() {
 
       setUser(userCredential.user.email);
       navigate("/Profils");
-      message.success("Ielogosanas veiksmiga");
+      message.success("Pieslegsanas veiksmiga");
     } catch (error) {
       console.error("Error logging in: ", error);
       message.error("Login neizdevas");
@@ -116,7 +115,7 @@ export default function Login() {
   const items = [
     {
       key: "1",
-      label: "Ielogoties sistema",
+      label: "Pieslegties sistemai",
       children: "",
     },
     {
@@ -142,8 +141,7 @@ export default function Login() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage:
-              "url(https://faili.liepaja.lv/Bildes/Kultura/IzgaismotaLiepaja-20201021-KarlisVolkovskis-85-1024x683.jpg)",
+            backgroundImage: `url(${liepaja})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -164,12 +162,9 @@ export default function Login() {
             }}
           >
             <Avatar sx={{ m: 1 }}>
-                <Button
-                
-                onClick={handleMainClick}
-                >
-            <HomeIcon/>
-            </Button>
+              <Button onClick={handleMainClick}>
+                <HomeIcon />
+              </Button>
             </Avatar>
             <Tabs
               defaultActiveKey="1"
