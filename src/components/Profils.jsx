@@ -1,9 +1,8 @@
 import React from 'react';
 
 import { Avatar, Space } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 import { useUser } from './UserContext';
-import Header from './start/Header';
+import Header from './Header/Header';
 const Profils = () => {
     const { userEmail } = useUser();
   return (

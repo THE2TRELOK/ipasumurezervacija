@@ -1,8 +1,7 @@
 import React from 'react';
 
-import Header from './components/start/Header';
-import "./css/header.css";
-import "./css/index.css";
+import Header from './Header/Header';
+import "../index.css";
 export default function Apartamenti() {
   return (
     <div>

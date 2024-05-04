@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import "../css/index.css"
 const Calendarnbook = () => {
   const [inputType, setInputType] = useState("text");
 
