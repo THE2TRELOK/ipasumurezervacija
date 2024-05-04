@@ -9,7 +9,7 @@ export default function Apartamenti() {
       <Header />
       
      <main>
-     <div class="container">*
+     <div class="container">
      
            
             <section class="rooms-section">

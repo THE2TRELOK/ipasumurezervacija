@@ -106,7 +106,7 @@ export default function Login() {
       message.success("Pieslegsanas veiksmiga");
     } catch (error) {
       console.error("Error logging in: ", error);
-      message.error("Login neizdevas");
+      message.error("Neizdevas Pieslegties");
     }
   };
 
@@ -159,7 +159,7 @@ export default function Login() {
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square >
         <Button onClick={handleMainClick}>
                 <ArrowBackIcon 
-                style={{margin:"10px 10px"}}
+                style={{margin:"10px 10px", width:"100px",height:"50px"}}
                 />
               </Button>
           <Box

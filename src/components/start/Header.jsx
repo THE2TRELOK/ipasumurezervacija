@@ -37,14 +37,8 @@ const Header = () => {
           </div>
           <ul className="header-nav-lists">
             <li className="header-nav-list">
-              <Button
+              <Button className="Buttons"
                 onClick={handleMainClick}
-                style={{
-                  backgroundColor: "rgba(49, 49, 54, 0.993)",
-                  color: "white",
-                  lineHeight: "0",
-                  padding: "20px",
-                }}
               >
                 Sakums
               </Button>
@@ -52,42 +46,24 @@ const Header = () => {
             <li className="header-nav-list"></li>
             {isLoggedIn && (
               <li className="header-nav-list">
-                <Button
+                <Button className="Buttons"
                   onClick={handleProfilsClick}
-                  style={{
-                    backgroundColor: "rgba(49, 49, 54, 0.993)",
-                    color: "white",
-                    lineHeight: "0",
-                    padding: "20px",
-                  }}
                 >
                   Profils
                 </Button>
               </li>
             )}
             <li className="header-nav-list">
-              <Button
+              <Button className="Buttons"
                 onClick={handleApartamentiClick}
-                style={{
-                  backgroundColor: "rgba(49, 49, 54, 0.993)",
-                  color: "white",
-                  lineHeight: "0",
-                  padding: "20px",
-                }}
               >
                 Apartamenti
               </Button>
             </li>
 
             <li className="header-nav-list">
-              <Button
+              <Button className="Buttons"
                 onClick={handleLoginClick}
-                style={{
-                  backgroundColor: "rgba(49, 49, 54, 0.993)",
-                  color: "white",
-                  lineHeight: "0",
-                  padding: "20px",
-                }}
               >
                 Pieslegties
               </Button>
