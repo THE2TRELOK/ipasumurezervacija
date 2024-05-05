@@ -1,23 +1,10 @@
 import { useState } from "react";
-import logo from "./logo.svg"
 import "./strength.css";
-import house from "./house.png";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../../firebase";
-import { TextField, InputLabel, Input } from "@mui/material";
+import { TextField } from "@mui/material";
 
 const strengthLabels = ["vaja", "videja", "videja", "stipra", "stipra"];
 
 export const PasswordStrength = ({ placeholder, onChange }) => {
-
-   
-  const addTodo = (e) => {
-      e.preventDefault();        
-  }
-  const handlePasswordChange = (password) => {
-    console.log("Password changed:", password);
-  };
-
   const [strength, setStrength] = useState("");
 
   const getStrength = (password) => {
@@ -36,7 +23,7 @@ export const PasswordStrength = ({ placeholder, onChange }) => {
   const handleChange = (event) => {
     const newPassword = event.target.value;
     setStrength(getStrength(newPassword));
-    onChange(newPassword); 
+    onChange(newPassword);
   };
 
   return (
@@ -51,32 +38,14 @@ export const PasswordStrength = ({ placeholder, onChange }) => {
         autoComplete="new-password"
         sx={{ mb: 1 }}
         margin="normal"
-                required
-                fullWidth
-            
-                label="Parole"
-                
-                
+        required
+        fullWidth
+        label="Parole"
       />
       <div className={`bars ${strength}`}>
         <div></div>
       </div>
       <div className="strength">{strength && `${strength} parole`}</div>
     </>
-  );
-};
-
-export const PasswordStrengthExample = () => {
-  const handleChange = (value) => console.log(value);
-
-  
-  return (
-    
-          
-          <PasswordStrength placeholder="Parole" onChange={handleChange}
-          
-          />
-          
-        
   );
 };

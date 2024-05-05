@@ -90,9 +90,8 @@ button.control {
 .bars.stipra div {
   background: #57c558;
   width: 100%;
-}*
-
-.strength {
+}
+* .strength {
   text-align: left;
   height: 30px;
   text-transform: capitalize;
