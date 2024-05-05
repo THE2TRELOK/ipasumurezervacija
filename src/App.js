@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route,Navigate  } from "react-router-dom";
 import Header from "./components/Header/Header";
 import Calendarnbook from "./components/start/Calendarnbook";
-import Footer from "./components/start/Footer/Footer";
+import Footer from "./components/Footer/Footer";
 import Review from "./components/start/Review";
 import Apartamenti from "./components/Apartamenti";
 import Popular from "./components/start/Popular";

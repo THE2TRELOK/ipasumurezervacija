@@ -4,6 +4,7 @@ import "./strength.css";
 import house from "./house.png";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import { TextField, InputLabel, Input } from "@mui/material";
 
 const strengthLabels = ["vaja", "videja", "videja", "stipra", "stipra"];
 
@@ -33,19 +34,29 @@ export const PasswordStrength = ({ placeholder, onChange }) => {
   };
 
   const handleChange = (event) => {
-    setStrength(getStrength(event.target.value));
-    onChange(event.target.value);
+    const newPassword = event.target.value;
+    setStrength(getStrength(newPassword));
+    onChange(newPassword); 
   };
 
   return (
     <>
-      <input
+      <TextField
         name="password"
         spellCheck="false"
         className="control"
         type="password"
         placeholder={placeholder}
         onChange={handleChange}
+        autoComplete="new-password"
+        sx={{ mb: 1 }}
+        margin="normal"
+                required
+                fullWidth
+            
+                label="Parole"
+                
+                
       />
       <div className={`bars ${strength}`}>
         <div></div>

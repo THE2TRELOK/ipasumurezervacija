@@ -54,7 +54,7 @@ const Popular = () => {
         >
           <Meta
             avatar={
-              <Avatar  src="https://api.dicebear.com/7.x/miniavs/svg?seed=2" />
+              <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=2" />
             }
             title="Marks"
             description="Gaidam pie mums ciemos!"

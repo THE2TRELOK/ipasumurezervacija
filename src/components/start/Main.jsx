@@ -1,19 +1,19 @@
-import Footer from "./Footer/Footer";
+import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
 import Popular from "./Popular";
 import Review from "./Review";
 import Calendarnbook from "./Calendarnbook";
 
- const Main  = () => {
-    return(
+const Main = () => {
+  return (
     <>
-    <Header />
-    <Calendarnbook />
-    <Popular />
-    <Review />
-    <Footer />
+      <Header />
+      <Calendarnbook />
+      <Popular />
+      <Review />
+      <Footer />
     </>
-    );
+  );
 };
 
-export default  Main; 
+export default Main;

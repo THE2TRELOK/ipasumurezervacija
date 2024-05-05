@@ -6,10 +6,9 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
-import HomeIcon from "@mui/icons-material/Home";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -18,6 +17,7 @@ import { Tabs, message } from "antd";
 import { auth, db } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import liepaja from "./Liepaja.jpg";
+import { PasswordStrength } from "../PasswordStrength/PasswordStrength";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -54,6 +54,10 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
+
+  const handlePasswordChange = (newPassword) => {
+    setPassword(newPassword); 
+  };
 
   const handleMainClick = () => {
     navigate("/");
@@ -134,11 +138,10 @@ export default function Login() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      
       {contextHolder}
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
-        
+
         <Grid
           item
           xs={false}
@@ -155,13 +158,13 @@ export default function Login() {
             backgroundPosition: "center",
           }}
         />
-        
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square >
-        <Button onClick={handleMainClick}>
-                <ArrowBackIcon 
-                style={{margin:"10px 10px", width:"100px",height:"50px"}}
-                />
-              </Button>
+
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Button onClick={handleMainClick}>
+            <ArrowBackIcon
+              style={{ margin: "10px 10px", width: "100px", height: "50px" }}
+            />
+          </Button>
           <Box
             sx={{
               my: 8,
@@ -171,8 +174,6 @@ export default function Login() {
               alignItems: "center",
             }}
           >
-            
-           
             <Tabs
               defaultActiveKey="1"
               items={items}
@@ -230,7 +231,11 @@ export default function Login() {
                 e.preventDefault();
                 handleRegister();
               }}
-              sx={{ width:735, mt: 1, display: activeTab === "3" ? "block" : "none" }}
+              sx={{
+                width: 735,
+                mt: 1,
+                display: activeTab === "3" ? "block" : "none",
+              }}
             >
               {/* Registration Form */}
               <TextField
@@ -267,7 +272,7 @@ export default function Login() {
                 autoComplete="email"
                 sx={{ mb: 1 }}
               />
-              <TextField
+              <PasswordStrength
                 margin="normal"
                 required
                 fullWidth
@@ -275,7 +280,7 @@ export default function Login() {
                 label="Parole"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
                 autoComplete="new-password"
                 sx={{ mb: 1 }}
               />
@@ -288,7 +293,7 @@ export default function Login() {
                 Registreties
               </Button>
             </Box>
-           
+
             <Copyright sx={{ mt: 5 }} />
           </Box>
         </Grid>

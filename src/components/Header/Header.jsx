@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import "./header.css"
+import "./header.css";
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -37,34 +37,26 @@ const Header = () => {
           </div>
           <ul className="header-nav-lists">
             <li className="header-nav-list">
-              <Button className="Buttons"
-                onClick={handleMainClick}
-              >
+              <Button className="Buttons" onClick={handleMainClick}>
                 Sakums
               </Button>
             </li>
             <li className="header-nav-list"></li>
             {isLoggedIn && (
               <li className="header-nav-list">
-                <Button className="Buttons"
-                  onClick={handleProfilsClick}
-                >
+                <Button className="Buttons" onClick={handleProfilsClick}>
                   Profils
                 </Button>
               </li>
             )}
             <li className="header-nav-list">
-              <Button className="Buttons"
-                onClick={handleApartamentiClick}
-              >
+              <Button className="Buttons" onClick={handleApartamentiClick}>
                 Apartamenti
               </Button>
             </li>
 
             <li className="header-nav-list">
-              <Button className="Buttons"
-                onClick={handleLoginClick}
-              >
+              <Button className="Buttons" onClick={handleLoginClick}>
                 Pieslegties
               </Button>
             </li>
