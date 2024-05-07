@@ -1,4 +1,5 @@
 import React from 'react';
+import "../css/index.css"
 import { Avatar, Space } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 const Review = () => {

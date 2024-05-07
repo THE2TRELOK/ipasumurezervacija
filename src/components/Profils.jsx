@@ -1,8 +1,8 @@
 import React from 'react';
-
 import { Avatar, Space } from 'antd';
 import { useUser } from './UserContext';
 import Header from './Header/Header';
+
 const Profils = () => {
     const { userEmail } = useUser();
   return (
@@ -13,6 +13,7 @@ const Profils = () => {
 		<h2 className="review-title">
 			Jusu Profils
 		</h2>
+		
 		<hr className="horizontal"/>
 		<p className="">Jusu informacija</p>
 	</div>

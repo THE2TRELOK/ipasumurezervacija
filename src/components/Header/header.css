@@ -2,13 +2,18 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  
 }
 
 body {
   font-family: "Source Sans Pro", sans-serif;
   background-color: darkgray;
+  
+  
 }
-
+header{
+  background-color: rgba(49, 49, 54, 0.993);
+}
 #logo {
   width: 120px;
   height: 100px;

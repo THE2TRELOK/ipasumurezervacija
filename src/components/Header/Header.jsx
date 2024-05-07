@@ -43,11 +43,7 @@ const Header = () => {
               </Button>
             </li>
             <li className="header-nav-list"></li>
-            <Button onClick={handleMainClick}>
-            <AdminPanelSettingsIcon
-              style={{ margin: "10px 10px", width: "100px", height: "50px" }}
-            />
-          </Button>
+           
               <li className="header-nav-list">
                 <Button className="Buttons" onClick={handleProfilsClick}>
                   Profils
