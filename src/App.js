@@ -25,9 +25,7 @@ function App() {
           <Route path="/review" element={<Review />} />
           <Route path="/apartamenti" element={<Apartamenti />} />
           <Route path="/popular" element={<Popular />} />
-          <Route path="/profils"
-          element={user ? <Profils /> : <Navigate to="/" />}
-          />
+          <Route path="/profils"element={<Profils />}/>
           <Route path="/login" element={<Login/>}/>
       </Routes>
     </BrowserRouter>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./header.css";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -42,13 +43,17 @@ const Header = () => {
               </Button>
             </li>
             <li className="header-nav-list"></li>
-            {isLoggedIn && (
+            <Button onClick={handleMainClick}>
+            <AdminPanelSettingsIcon
+              style={{ margin: "10px 10px", width: "100px", height: "50px" }}
+            />
+          </Button>
               <li className="header-nav-list">
                 <Button className="Buttons" onClick={handleProfilsClick}>
                   Profils
                 </Button>
               </li>
-            )}
+           
             <li className="header-nav-list">
               <Button className="Buttons" onClick={handleApartamentiClick}>
                 Apartamenti

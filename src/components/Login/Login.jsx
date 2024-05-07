@@ -5,6 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import { setPersistence, browserSessionPersistence } from "firebase/auth";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -65,29 +66,41 @@ export default function Login() {
 
   const handleRegister = async () => {
     try {
+      // Check if the user is already registered
+      const userRef = doc(db, "Users", email);
+      const userSnapshot = await getDoc(userRef);
+      if (userSnapshot.exists()) {
+        message.error("Šis e-pasts jau ir reģistrēts.");
+        return;
+      }
+  
+      // Create the user
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       console.log("User registered successfully:", userCredential.user);
-
-      setUser(userCredential.user.email);
-      message.success("Registracija veiksmiga");
-
-      const userDocRef = doc(db, "Users", userCredential.user.uid);
-      await setDoc(userDocRef, {
+  
+      // Set the user's data in the database
+      await setDoc(userRef, {
         Vards: namee,
         Uzvards: surname,
         Epasts: email,
       });
+  
+      const role = "user";
+      await auth.currentUser.assignRole(role);
+
+      setUser(userCredential.user.email);
+      message.success("Registracija veiksmiga");
     } catch (error) {
       console.error("Error registering user: ", error.code, error.message);
       message.error("Registracija neizdevas");
     }
   };
 
-  const handleLogin = async () => {
+ const handleLogin = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -105,9 +118,19 @@ export default function Login() {
         surname: userDocSnapshot.data().Uzvards,
       });
 
-      setUser(userCredential.user.email);
-      navigate("/Profils");
-      message.success("Pieslegsanas veiksmiga");
+      // Начало сеанса браузера
+      setPersistence(auth, browserSessionPersistence)
+        .then(() => {
+          // Сеанс браузера успешно начат.
+          setUser(userCredential.user.email);
+          navigate("/Profils");
+          message.success("Pieslegsanas veiksmiga");
+        })
+        .catch((error) => {
+          // Ошибка при начале сеанса браузера.
+          console.error("Error setting persistence: ", error);
+          message.error("Neizdevas Pieslegties");
+        });
     } catch (error) {
       console.error("Error logging in: ", error);
       message.error("Neizdevas Pieslegties");
