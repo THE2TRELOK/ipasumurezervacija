@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -22,3 +23,20 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 export   {db,auth,createUserWithEmailAndPassword} ;
+
+export const getUserRole = async (userId) => {
+  try {
+    const userDoc = await getDoc(doc(db, "Users", userId));
+
+    // ja dokuments eksiste atgriez lietotaju
+    if (userDoc.exists()) {
+      return userDoc.data().Role;
+    } else {
+      console.log("Данные пользователя не найдены");
+      return null;
+    }
+  } catch (error) {
+    console.error("Ошибка при получении данных пользователя", error);
+    return null;
+  }
+};

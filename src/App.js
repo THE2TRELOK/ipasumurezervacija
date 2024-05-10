@@ -7,10 +7,60 @@ import Apartamenti from "./components/Apartamenti";
 import Popular from "./components/start/Popular";
 import Main from "./components/start/Main";
 import Profils from "./components/Profils";
+import UserRegister from "./Admin/UserRegister.jsx";
 import Login from "./components/Login/Login";
+import { useEffect, useState } from "react";
+import { auth, getUserRole } from "./firebase.js";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
 import { UserProvider, useUser } from "./components/UserContext"; 
 function App() {
-  const { user } = useUser();
+  const [user, setUser] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+      setIsLoading(true);
+      if (user) {
+        getUserRole(user.uid).then((role) => {
+          setUserRole(role);
+          setIsLoading(false);
+        });
+      } else {
+        setUserRole(null);
+        setIsLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        {" "}
+        <Spin
+          indicator={
+            <LoadingOutlined
+              style={{
+                fontSize: 24,
+              }}
+            />
+          }
+        />
+      </div>
+    );
+  }
+  
   return (
     <div className="App"
     >
@@ -25,8 +75,19 @@ function App() {
           <Route path="/review" element={<Review />} />
           <Route path="/apartamenti" element={<Apartamenti />} />
           <Route path="/popular" element={<Popular />} />
-          <Route path="/profils"element={<Profils />}/>
+          <Route
+          path="/profils"
+          element={
+            userRole === "Admin" || userRole === "User"  ? (<Profils /> ): (<Navigate to="/login" />)
+          }
+        />
           <Route path="/login" element={<Login/>}/>
+          <Route
+          path="/userregistry"
+          element={
+            userRole === "Admin"? <UserRegister /> : <Navigate to="/login" />
+          }
+        />
       </Routes>
     </BrowserRouter>
     </UserProvider>

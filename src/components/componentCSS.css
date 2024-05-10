@@ -1,0 +1,111 @@
+/* componentCSS.css */
+
+.ag-theme-material {
+  border: 1px solid rgb(228, 228, 228);
+  border-radius: 0.8rem;
+  overflow: hidden; /* Ensures the corners are fully rounded */
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #3b331a;
+  margin: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  padding: 10px 30px; /* Adjust padding as needed */
+  background-color: rgba(49, 49, 54, 0.993);
+  text-align: center;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.logo-text {
+  color: #FFFF !important;
+  font-size: 32px !important;
+  margin-left: 10px; /* Adjust margin as needed */
+}
+
+.login-logo {
+  width: 60px !important;
+  height: 60px !important;
+  margin-bottom: 0; /* Remove bottom margin */
+}
+
+.antd-divider{
+  margin: 17px 0 !important;
+}
+
+
+.time {
+  font-size: 42px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.footer-text {
+  text-align: center;
+  color: rgba(49, 49, 54, 0.993);
+  font-size: 12px;
+}
+
+.ant-layout {
+  background: #FFFF; /* Replace with your desired color */
+}
+
+.ant-menu-item:hover {
+  background-color: #c9a633 !important; /* Secondary color */
+}
+
+/* Change background color for menu item when focused */
+.ant-menu-item-selected:focus {
+  background-color: #c9a633 !important; /* Accent color */
+  
+}
+
+/* Change text color for menu items */
+.ant-menu-item-selected {
+  color: rgba(49, 49, 54, 0.993) !important; /* Primary color */
+}
+
+.ant-menu-item{
+  color: black;
+}
+
+.ant-menu-item:hover{
+  color: white !important;
+}
+
+.ant-menu-item-selected{
+  background-color: rgba(49, 49, 54, 0.993) !important;
+  color: white !important;
+}
+
+
+.ant-input:hover {
+  border-color: rgba(49, 49, 54, 0.993) !important; /* Change to your primary color */
+}
+
+.modal-submit{
+  background-color: rgba(49, 49, 54, 0.993);
+  color: white;
+}
+
+.modal-submit:hover{
+  background-color: #c9a633 !important;
+  color: white !important;
+  border-color: #c9a633 !important;
+}

@@ -55,7 +55,19 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "Jus veiksmigi iegajat sistema!",
+    });
+  };
 
+  const errormsg = () => {
+    messageApi.open({
+      type: "error",
+      content: "Nepareiza e-pasta adrese un/vai parole!",
+    });
+  };
   const handlePasswordChange = (newPassword) => {
     setPassword(newPassword); 
   };
@@ -64,16 +76,10 @@ export default function Login() {
     navigate("/");
   };
 
+
+  
   const handleRegister = async () => {
     try {
-      // Check if the user is already registered
-      const userRef = doc(db, "Users", email);
-      const userSnapshot = await getDoc(userRef);
-      if (userSnapshot.exists()) {
-        message.error("Šis e-pasts jau ir reģistrēts.");
-        return;
-      }
-  
       // Create the user
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -82,59 +88,35 @@ export default function Login() {
       );
       console.log("User registered successfully:", userCredential.user);
   
-      // Set the user's data in the database
-      await setDoc(userRef, {
-        Vards: namee,
-        Uzvards: surname,
-        Epasts: email,
+      // Save user data in Firestore with UID as document ID
+      await setDoc(doc(db, "Users", userCredential.user.uid), {
+        Name: namee,
+        Surname: surname,
+        Email: email,
+        Role: "User",
+        Status: "Active"
       });
   
-      const role = "user";
-      await auth.currentUser.assignRole(role);
-
       setUser(userCredential.user.email);
-      message.success("Registracija veiksmiga");
+      message.success("Registration successful");
     } catch (error) {
       console.error("Error registering user: ", error.code, error.message);
-      message.error("Registracija neizdevas");
+      message.error("Registration failed");
     }
   };
 
- const handleLogin = async () => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log("User logged in successfully:", userCredential.user);
-
-      const userDocRef = doc(db, "Users", userCredential.user.uid);
-      const userDocSnapshot = await getDoc(userDocRef);
-
-      setUser({
-        email: userCredential.user.email,
-        namee: userDocSnapshot.data().Vards,
-        surname: userDocSnapshot.data().Uzvards,
+  const handleLogin = (password, email) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        success();
+        const user = userCredential.user;
+        navigate("/profils");
+      })
+      .catch((error) => {
+        errormsg();
+        const errorCode = error.code;
+        const errorMessage = error.message;
       });
-
-      // Начало сеанса браузера
-      setPersistence(auth, browserSessionPersistence)
-        .then(() => {
-          // Сеанс браузера успешно начат.
-          setUser(userCredential.user.email);
-          navigate("/Profils");
-          message.success("Pieslegsanas veiksmiga");
-        })
-        .catch((error) => {
-          // Ошибка при начале сеанса браузера.
-          console.error("Error setting persistence: ", error);
-          message.error("Neizdevas Pieslegties");
-        });
-    } catch (error) {
-      console.error("Error logging in: ", error);
-      message.error("Neizdevas Pieslegties");
-    }
   };
 
   const handleTabChange = (key) => {
@@ -207,7 +189,7 @@ export default function Login() {
               noValidate
               onSubmit={(e) => {
                 e.preventDefault();
-                handleLogin();
+                handleLogin(password, email);
               }}
               sx={{ mt: 1, display: activeTab === "1" ? "block" : "none" }}
             >
