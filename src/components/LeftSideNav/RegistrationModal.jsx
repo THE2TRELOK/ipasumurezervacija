@@ -18,7 +18,6 @@ const RegistrationModal = ({
     // Reset password enabled state when modal closes or mode switches
     setPasswordEnabled(isEditMode ? false : true);
   }, [isEditMode, visible]);
-
   const handleCheckboxChange = (e) => {
     setPasswordEnabled(e.target.checked);
   };
@@ -60,9 +59,9 @@ const RegistrationModal = ({
             <Checkbox
               checked={passwordEnabled}
               onChange={handleCheckboxChange}
-              style={{ marginBottom: '10px' }}
+              style={{ marginBottom: "10px" }}
             >
-             Mainīt paroli
+              Mainīt paroli
             </Checkbox>
             {passwordEnabled && (
               <Form.Item

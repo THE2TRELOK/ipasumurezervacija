@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import Logo from "./Logo.png"
 import "./header.css";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 const Header = () => {
@@ -30,7 +31,7 @@ const Header = () => {
           <div className="header-nav-logo">
             <a onClick={handleMainClick}>
               <img
-                src="https://png.pngtree.com/png-clipart/20220131/original/pngtree-housing-logo-with-gold-line-house-png-image_7261238.png"
+                src={Logo}
                 alt="logo"
                 id="logo"
               />
