@@ -49,7 +49,7 @@ const Navbar = () => {
       <Link to="/calendar" className="logo">
         {/* <img src={logo} alt="Logo" className="login-logo" /> */}
 
-        <Title className="logo-text" level={2}>RSTS</Title>
+        <Title className="logo-text" level={2}>EstatoRent</Title>
       </Link>
       <Menu mode="vertical" defaultSelectedKeys={[location.pathname]}>
         <Menu.Item key="/calendar" icon={<CalendarOutlined />}>
@@ -60,8 +60,8 @@ const Navbar = () => {
         <Menu.Item key="/userregistry" icon={<UserOutlined />}>
           <Link to="/userregistry">Lietotāju reģistrs</Link>
         </Menu.Item>
-        <Menu.Item key="/driverregister" icon={<DatabaseOutlined />}>
-          <Link to="/driverregister">Pārvadātāju reģistrs</Link>
+        <Menu.Item key="/profils" icon={<DatabaseOutlined />}>
+          <Link to="/profils">Profils</Link>
         </Menu.Item>
         <Divider className="antd-divider" />
         <Menu.Item key="/settings" icon={<SettingOutlined />}>
@@ -79,12 +79,13 @@ const Navbar = () => {
         </Menu.Item>
       </Menu>
       <Divider className="antd-divider" />
-      <div className="footer">
+      <div className="footerNav">
         <Text className="time">{currentTime}</Text>
         <Text className="footer-text">
+        <Divider className="antd-divider" />
         {" © "}
       <Link color="inherit" href="https://github.com/THE2TRELOK">
-        IpasumuRezervacija
+      EstatoRent
       </Link>
           <br />
           Visas tiesības aizsargātas.

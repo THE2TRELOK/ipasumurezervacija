@@ -1,38 +1,55 @@
-import React from 'react';
-import { Avatar, Space } from 'antd';
-import { useUser } from './UserContext';
-import Header from './Header/Header';
+import React, { useState, useEffect } from "react";
+import { Button, Layout, Space, message } from "antd";
+import { AgGridReact } from "ag-grid-react";
+import { db,auth } from "../firebase";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-material.css";
+import Header from "../components/Header/Header";
+// import "../../App.css";
+import "../Admin/UserRegisterCSS.css";
+import RegistrationModal from "../components/LeftSideNav/RegistrationModal";
+import Navbar from "../components/LeftSideNav/Navbar";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UserAddOutlined,
+  CheckOutlined,
+} from "@ant-design/icons";
+import {
+  doc,
+  setDoc,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  where,
+} from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth"; // Import auth functions from Firebase
+
+const { Content } = Layout;
 
 const Profils = () => {
-    const { userEmail } = useUser();
+ 
   return (
     <>
-    <Header/>
-    <div className="review-container">
-	<div className="review-header">
-		<h2 className="review-title">
-			Jusu Profils
-		</h2>
-		
-		<hr className="horizontal"/>
-		<p className="">Jusu informacija</p>
-	</div>
-	<div className="cards-container">
-		
-		<div className="card">
-		<Avatar size={120} src="https://beach.volley.ru/assets/images/uploads/VLPlayer/01FDD5HZX3G0WQ1DEJPVB018E2/upload-1634667221142-01FDD5HZX3G0WQ1DEJPVB018E2--394899181.jpg" />
-			<h2 className="card-title">
-            
-			</h2>
-			<h3 className="card-subtitle">*****
-				Liepāja
-			</h3>
-			<p className="card-desc">Jusu epasts: {userEmail}</p>
-		</div>
-		
-	</div>
-</div>
-</>
+      <Layout style={{ minHeight: "100vh" }}>
+        <Navbar />
+        <Layout className="site-layout">
+          <Content style={{ margin: "16px 16px" }}>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              
+              <div className="ag-theme-material" style={{ height: "96vh" }}>
+                
+              </div>
+            </Space>
+          </Content>
+        </Layout>
+      </Layout>
+
+      
+
+    
+    </>
   );
 };
 

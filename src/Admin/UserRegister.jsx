@@ -4,10 +4,11 @@ import { AgGridReact } from "ag-grid-react";
 import { db,auth } from "../firebase";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
+import Header from "../components/Header/Header";
 // import "../../App.css";
 import "./UserRegisterCSS.css";
-import RegistrationModal from "../components/RegistrationModal";
-import Navbar from "../components/Navbar";
+import RegistrationModal from "../components/LeftSideNav/RegistrationModal";
+import Navbar from "../components/LeftSideNav/Navbar";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -115,7 +116,6 @@ const UserRegister = () => {
           { ...values, password: passwordToUse },
           editUser.uid
         );
-        message.success("User details updated successfully!");
       } else {
         // Creating new user
         const userCredential = await createUserWithEmailAndPassword(

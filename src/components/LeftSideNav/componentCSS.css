@@ -49,7 +49,7 @@
   font-size: 42px;
 }
 
-.footer {
+.footerNav {
   display: flex;
   flex-direction: column;
   align-items: center;

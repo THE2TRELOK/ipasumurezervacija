@@ -25,7 +25,6 @@ import {
 } from "firebase/auth";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router";
-import { Padding } from "@mui/icons-material";
 function Copyright(props) {
   return (
     <Typography
@@ -36,7 +35,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://github.com/THE2TRELOK">
-        IpasumuRezervacija
+      EstatoRent
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

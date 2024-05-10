@@ -17,7 +17,7 @@ const Footer = () => {
         <div className="item2">
           <FontAwesomeIcon icon={faCopyright} />{" "}
           <span style={{ paddingLeft: 5 }}>
-            {new Date().getFullYear()} Rezervacija. Visas tiesibas aizsargatas.
+            {new Date().getFullYear()} EstatoRent. Visas tiesibas aizsargatas.
           </span>
         </div>
         <a href="https://github.com" target="_blank" className="item3">
