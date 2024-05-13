@@ -13,6 +13,7 @@ import { db, auth } from "../firebase";
 import { LikeOutlined } from "@ant-design/icons";
 import { Col, Row, Statistic } from "antd";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import { Box, Paper } from "@mui/material";
 import {
   getStorage,
   ref,
@@ -21,7 +22,7 @@ import {
 } from "firebase/storage";
 import Navbar from "../components/LeftSideNav/Navbar";
 const { Content } = Layout;
-import { Box, Paper } from "@mui/material";
+
 const Profils = () => {
   const [userData, setUserData] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
