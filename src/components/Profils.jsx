@@ -1,39 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { Button, Layout, Space, message } from "antd";
-import { AgGridReact } from "ag-grid-react";
+import {
+  Button,
+  Layout,
+  Space,
+  message,
+  Modal,
+  Input,
+  Upload,
+  Avatar,
+} from "antd";
 import { db, auth } from "../firebase";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
-import Header from "../components/Header/Header";
-import "../Admin/UserRegisterCSS.css";
-
-import RegistrationModal from "../components/LeftSideNav/RegistrationModal";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from "firebase/storage";
 import Navbar from "../components/LeftSideNav/Navbar";
-import { styled } from "@mui/material/styles";
-import Grid from "@mui/material/Unstable_Grid2";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  UserAddOutlined,
-  CheckOutlined,
-} from "@ant-design/icons";
-import {
-  doc,
-  setDoc,
-  collection,
-  getDoc,
-  query,
-  where,
-} from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-
 const { Content } = Layout;
-
+import { Box, Paper } from "@mui/material";
 const Profils = () => {
   const [userData, setUserData] = useState(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [editedSurname, setEditedSurname] = useState("");
+  const [editedImage, setEditedImage] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -43,6 +35,9 @@ const Profils = () => {
         const userDocSnapshot = await getDoc(userDocRef);
         if (userDocSnapshot.exists()) {
           setUserData(userDocSnapshot.data());
+          setEditedName(userDocSnapshot.data().Name);
+          setEditedSurname(userDocSnapshot.data().Surname);
+          setEditedImage(userDocSnapshot.data().Image);
         } else {
           console.log("User data not found");
         }
@@ -52,6 +47,41 @@ const Profils = () => {
     };
     fetchUserData();
   }, []);
+
+  const updateUserData = async () => {
+    try {
+      if (editedImage) {
+        const storage = getStorage();
+        const imageRef = ref(storage, `profileImages/${auth.currentUser.uid}`);
+        await uploadString(imageRef, editedImage, "data_url");
+        const imageUrl = await getDownloadURL(imageRef);
+
+        await setDoc(
+          doc(db, "Users", auth.currentUser.uid),
+          {
+            Name: editedName,
+            Surname: editedSurname,
+            Image: imageUrl,
+          },
+          { merge: true }
+        );
+      } else {
+        await setDoc(
+          doc(db, "Users", auth.currentUser.uid),
+          {
+            Name: editedName,
+            Surname: editedSurname,
+          },
+          { merge: true }
+        );
+      }
+      message.success("Dati veiksmigi atjaunoti");
+      setEditModalVisible(false);
+    } catch (error) {
+      message.error("Kluda atjaunojot datus");
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -69,49 +99,68 @@ const Profils = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Grid
-                    container
-                    rowSpacing={1}
-                    columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                  <Paper
+                    elevation={3}
+                    style={{ padding: 40, textAlign: "center" }}
                   >
-                    <Grid item xs={12}>
-                      <Paper
-                        elevation={3}
-                        style={{ padding: 40, textAlign: "center" }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: 20,
-                          }}
-                        >
-                          <Avatar
-                            alt={userData.Name}
-                            src={userData.Image}
-                            sx={{ width: 200, height: 200 }}
-                          />
-                          <Box>
-                            <h2>{userData.Name}</h2>
-                            <p>Epasts: {userData.Email}</p>
-                            <p>Uzvards: {userData.Surname}</p>
-                            <p>
-                              Registracijas datums:{" "}
-                              {userData.createdAt.toDate().toLocaleDateString()}
-                            </p>
-                          </Box>
-                        </Box>
-                      </Paper>
-                    </Grid>
-                  </Grid>
+                    <Space direction="vertical">
+                      <Avatar
+                        alt={userData.Name}
+                        src={editedImage || userData.Image}
+                        style={{ width: 200, height: 200, margin: "0 auto" }}
+                      />
+                      <h2>{userData.Name}</h2>
+                      <p>Epasts: {userData.Email}</p>
+                      <p>Uzvards: {userData.Surname}</p>
+                      <p>
+                        Registracijas datums:{" "}
+                        {userData.createdAt.toDate().toLocaleDateString()}
+                      </p>
+                      <Button onClick={() => setEditModalVisible(true)}>
+                        Rediģet
+                      </Button>
+                    </Space>
+                  </Paper>
                 </Box>
               )}
             </Space>
           </Content>
         </Layout>
       </Layout>
+      {/* Модальное окно для редактирования данных */}
+      <Modal
+        title="Rediģet datus"
+        visible={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        onOk={updateUserData}
+      >
+        <Input
+          value={editedName}
+          onChange={(e) => setEditedName(e.target.value)}
+          placeholder="Vards"
+        />
+        <Input
+          value={editedSurname}
+          onChange={(e) => setEditedSurname(e.target.value)}
+          placeholder="Uzvards"
+        />
+        {/* Компонент для загрузки фото */}
+        <Upload
+          name="avatar"
+          action=""
+          showUploadList={false}
+          beforeUpload={(file) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+              setEditedImage(reader.result);
+            };
+            return false;
+          }}
+        >
+          <Button>Augšpieladet attelu</Button>
+        </Upload>
+      </Modal>
     </>
   );
 };
