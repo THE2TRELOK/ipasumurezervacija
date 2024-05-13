@@ -49,13 +49,15 @@ const Navbar = () => {
       <Link to="/calendar" className="logo">
         {/* <img src={logo} alt="Logo" className="login-logo" /> */}
 
-        <Title className="logo-text" level={2}>EstatoRent</Title>
+        <Title className="logo-text" level={2}>
+          EstatoRent
+        </Title>
       </Link>
       <Menu mode="vertical" defaultSelectedKeys={[location.pathname]}>
         <Menu.Item key="/calendar" icon={<CalendarOutlined />}>
           <Link to="/calendar">Kalendārs</Link>
         </Menu.Item>
-          
+
         <Divider className="antd-divider" />
         <Menu.Item key="/userregistry" icon={<UserOutlined />}>
           <Link to="/userregistry">Lietotāju reģistrs</Link>
@@ -63,6 +65,8 @@ const Navbar = () => {
         <Menu.Item key="/profils" icon={<DatabaseOutlined />}>
           <Link to="/profils">Profils</Link>
         </Menu.Item>
+        <Divider className="antd-divider" />
+
         <Divider className="antd-divider" />
         <Menu.Item key="/settings" icon={<SettingOutlined />}>
           <Link to="/settings">Iestatījumi</Link>
@@ -82,11 +86,11 @@ const Navbar = () => {
       <div className="footerNav">
         <Text className="time">{currentTime}</Text>
         <Text className="footer-text">
-        <Divider className="antd-divider" />
-        {" © "}
-      <Link color="inherit" href="https://github.com/THE2TRELOK">
-      EstatoRent
-      </Link>
+          <Divider className="antd-divider" />
+          {" © "}
+          <Link color="inherit" href="https://github.com/THE2TRELOK">
+            EstatoRent
+          </Link>
           <br />
           Visas tiesības aizsargātas.
         </Text>

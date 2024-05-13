@@ -8,7 +8,7 @@ header{
   background-color: rgba(49, 49, 54, 0.993);
 }
 #logo {
-  width: 120px;
+  width: 100px;
   height: 100px;
 }
 .header-container {
@@ -109,3 +109,4 @@ header ul.show li {
   font-size: 20px;
   font-weight: 30px;
 }
+

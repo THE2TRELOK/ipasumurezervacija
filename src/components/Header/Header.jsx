@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "antd";
+import { Button,Image } from "antd";
 import { useNavigate } from "react-router-dom";
 import Logo from "./Logo.png"
 import "./header.css";
@@ -30,10 +30,13 @@ const Header = () => {
         <nav className="header-nav-bar">
           <div className="header-nav-logo">
             <a onClick={handleMainClick}>
-              <img
+              <Image
+             
                 src={Logo}
                 alt="logo"
                 id="logo"
+                preview={false}
+              
               />
             </a>
           </div>

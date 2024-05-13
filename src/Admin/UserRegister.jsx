@@ -166,15 +166,22 @@ const UserRegister = () => {
   const handlePasswordChange = (e) => {
     setNewPassword(e.target.value);
   };
-
   const deactivateUser = async (user) => {
     console.log(`Neaktīvs lietotājs:`, user);
     try {
       const userDocRef = doc(db, "Users", user.uid);
       await setDoc(userDocRef, {
         ...user,
-        Status: "Neaktīvs",
+        Status: "Inactive",
       });
+      // Atjauno vietējo stāvokli pēc datubāzes atjaunināšanas
+      const updatedRowData = rowData.map((rowDataItem) => {
+        if (rowDataItem.uid === user.uid) {
+          return { ...rowDataItem, Status: "Inactive" };
+        }
+        return rowDataItem;
+      });
+      setRowData(updatedRowData);
       message.success("Lietotājs veiksmīgi deaktivēts");
     } catch (error) {
       console.error(
@@ -194,6 +201,14 @@ const UserRegister = () => {
         ...user,
         Status: "Aktīvs",
       });
+      // Atjauno vietējo stāvokli pēc datubāzes atjaunināšanas
+      const updatedRowData = rowData.map((rowDataItem) => {
+        if (rowDataItem.uid === user.uid) {
+          return { ...rowDataItem, Status: "Aktīvs" };
+        }
+        return rowDataItem;
+      });
+      setRowData(updatedRowData);
       message.success("Lietotājs veiksmīgi aktivizēts");
     } catch (error) {
       console.error(
@@ -204,6 +219,7 @@ const UserRegister = () => {
       message.error("Kļūda lietotāja aktivizēšanā");
     }
   };
+  
 
   const updateUserDetails = async (values, uid) => {
     try {
