@@ -14,7 +14,7 @@ import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import AddressForm from "./AddressForm";
 import Ertibas from "./Ertibas";
-import Review from "./Review";
+import Apraksts from "./Apraksts";
 
 const steps = ["Adrese", "Ērtības", "Bildes un papildu informacija"]; 
 
@@ -25,7 +25,7 @@ function getStepContent(step) {
     case 1:
       return <Ertibas />;
     case 2:
-      return <Review />;
+      return <Apraksts />;
     default:
       throw new Error("Unknown step");
   }

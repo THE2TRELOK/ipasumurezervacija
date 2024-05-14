@@ -9,7 +9,7 @@ import Main from "./components/start/Main";
 import Profils from "./components/Profils";
 import UserRegister from "./Admin/UserRegister.jsx";
 import Login from "./components/Login/Login";
-import Checkout from "./components/RezervacijasPievienojums/Checkout.js";
+import Checkout from "./components/RezervacijasPievienojums/Checkout.jsx";
 import { useEffect, useState } from "react";
 import { auth, getUserRole } from "./firebase.js";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -76,7 +76,7 @@ function App() {
           <Route path="/review" element={<Review />} />
           <Route path="/apartamenti" element={<Apartamenti />} />
           <Route path="/popular" element={<Popular />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout" element={<Checkout/>} />
           <Route
           path="/profils"
           element={
