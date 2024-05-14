@@ -66,7 +66,9 @@ const Navbar = () => {
           <Link to="/profils">Profils</Link>
         </Menu.Item>
         <Divider className="antd-divider" />
-
+        <Menu.Item key="/piedavajums" icon={<SettingOutlined />}>
+          <Link to="/piedavajums">Mana māja</Link>
+        </Menu.Item>
         <Divider className="antd-divider" />
         <Menu.Item key="/settings" icon={<SettingOutlined />}>
           <Link to="/settings">Iestatījumi</Link>
