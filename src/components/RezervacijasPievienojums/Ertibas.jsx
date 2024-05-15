@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import LaptopIcon from '@mui/icons-material/Laptop';
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import TvIcon from '@mui/icons-material/Tv';
 import WifiIcon from '@mui/icons-material/Wifi';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
@@ -11,7 +10,6 @@ import LocalParkingIcon from '@mui/icons-material/LocalParking';
 import PoolIcon from '@mui/icons-material/Pool';
 import KitchenIcon from '@mui/icons-material/Kitchen';
 import Box from '@mui/material/Box';
-import CabinIcon from '@mui/icons-material/Cabin';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService';
 import OutdoorGrillIcon from '@mui/icons-material/OutdoorGrill';
@@ -20,6 +18,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import ShowerIcon from '@mui/icons-material/Shower';
 import FireplaceIcon from '@mui/icons-material/Fireplace';
+import { useState } from 'react';
 const amenitiesList = [
   { value: 'wifi', label: 'Wi-Fi', icon: <WifiIcon /> },
   { value: 'tv', label: 'Televizors', icon: <TvIcon /> },
@@ -39,7 +38,7 @@ const amenitiesList = [
 ];
 
 export default function Ertibas() {
-  const [selectedAmenities, setSelectedAmenities] = React.useState([]);
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
 
   const handleAmenitiesChange = (event, newAmenities) => {
     setSelectedAmenities(newAmenities);

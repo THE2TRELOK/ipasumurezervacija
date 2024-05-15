@@ -28,7 +28,7 @@ export default function Apraksts() {
         fullWidth
         variant="outlined"
         placeholder="Ievadiet cilvēku skaitu."
-        inputProps={{ min: "1", max: "20" }}
+        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
       />
     </Stack>
   );

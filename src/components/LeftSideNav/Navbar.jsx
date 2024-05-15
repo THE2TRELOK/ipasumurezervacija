@@ -18,7 +18,6 @@ import {
 } from "@ant-design/icons";
 import "./componentCSS.css";
 import dayjs from "dayjs";
-// import logo from "../Assets/logo.svg";
 
 const { Sider } = Layout;
 const { Title, Text } = Typography;
@@ -57,11 +56,14 @@ const Navbar = () => {
         <Menu.Item key="/calendar" icon={<CalendarOutlined />}>
           <Link to="/calendar">Kalendārs</Link>
         </Menu.Item>
-
-        <Divider className="antd-divider" />
-        <Menu.Item key="/userregistry" icon={<UserOutlined />}>
-          <Link to="/userregistry">Lietotāju reģistrs</Link>
-        </Menu.Item>
+        {userRole === "Admin" && (
+          <>
+            <Divider className="antd-divider" />
+            <Menu.Item key="/userregistry" icon={<UserOutlined />}>
+              <Link to="/userregistry">Lietotāju reģistrs</Link>
+            </Menu.Item>
+          </>
+        )}
         <Menu.Item key="/profils" icon={<DatabaseOutlined />}>
           <Link to="/profils">Profils</Link>
         </Menu.Item>
@@ -73,9 +75,13 @@ const Navbar = () => {
         <Menu.Item key="/settings" icon={<SettingOutlined />}>
           <Link to="/settings">Iestatījumi</Link>
         </Menu.Item>
-        <Menu.Item key="/logfiles" icon={<FileSearchOutlined />}>
-          <Link to="/logfiles">Žurnālfaili</Link>
-        </Menu.Item>
+        {userRole === "Admin" && (
+          <>
+            <Menu.Item key="/logfiles" icon={<FileSearchOutlined />}>
+              <Link to="/logfiles">Žurnālfaili</Link>
+            </Menu.Item>
+          </>
+        )}
         <Menu.Item
           key="/logout"
           icon={<LogoutOutlined />}

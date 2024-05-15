@@ -11,28 +11,28 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyCOqBlkcGBSqgTR6u1ky-3xt0nf63l-4Jc",
   authDomain: "nekustamaisipasums-7241c.firebaseapp.com",
-  databaseURL: "https://nekustamaisipasums-7241c-default-rtdb.europe-west1.firebasedatabase.app",
+  databaseURL:
+    "https://nekustamaisipasums-7241c-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "nekustamaisipasums-7241c",
   storageBucket: "nekustamaisipasums-7241c.appspot.com",
   messagingSenderId: "365415160440",
-  appId: "1:365415160440:web:6996f1db5568bfd22eab8d"
+  appId: "1:365415160440:web:6996f1db5568bfd22eab8d",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-export   {db,auth,createUserWithEmailAndPassword} ;
+export { db, auth, createUserWithEmailAndPassword };
 
 export const getUserRole = async (userId) => {
   try {
-    const userDoc = await getDoc(doc(db, "Users", userId));
-
-    // ja dokuments eksiste atgriez lietotaju
-    if (userDoc.exists()) {
-      return userDoc.data().Role;
+    const userDocRef = doc(db, "Users", userId);
+    const userDocSnapshot = await getDoc(userDocRef);
+    if (userDocSnapshot.exists() && userDocSnapshot.data().Role) {
+      return userDocSnapshot.data().Role;
     } else {
-      console.log("Данные пользователя не найдены");
+      console.log("Данные пользователя не найдены или отсутствует роль");
       return null;
     }
   } catch (error) {

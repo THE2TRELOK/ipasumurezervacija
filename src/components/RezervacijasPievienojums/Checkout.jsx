@@ -15,8 +15,8 @@ import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import AddressForm from "./AddressForm";
 import Ertibas from "./Ertibas";
 import Apraksts from "./Apraksts";
-
-const steps = ["Adrese", "Ērtības", "Bildes un papildu informacija"]; 
+import { useState } from "react";
+const steps = ["Adrese", "Ērtības", "Bildes un papildu informacija"];
 
 function getStepContent(step) {
   switch (step) {
@@ -32,7 +32,7 @@ function getStepContent(step) {
 }
 
 export default function Checkout() {
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -43,7 +43,7 @@ export default function Checkout() {
   };
 
   return (
-   <>
+    <>
       <CssBaseline />
       <Grid container sx={{ height: { xs: "100%", sm: "100dvh" } }}>
         <Grid
@@ -74,7 +74,7 @@ export default function Checkout() {
               startIcon={<ArrowBackRoundedIcon />}
               component="a"
               href="/profils"
-              sx={{ ml: "-8px", }}
+              sx={{ ml: "-8px" }}
             >
               Atpakaļ
             </Button>
@@ -178,8 +178,8 @@ export default function Checkout() {
                 <Typography variant="h5">Paldies!</Typography>
                 <Typography variant="body" color="text.secondary">
                   Paldies, ka izmantojat mūsu pakalpojumus, jūsu piedāvājums ir
-                  nosūtīts administratoram parbaudes nolukiem, un drīz to varēs redzēt
-                  arī citi lietotāji.
+                  nosūtīts administratoram parbaudes nolukiem, un drīz to varēs
+                  redzēt arī citi lietotāji.
                 </Typography>
                 <Button
                   variant="contained"
@@ -251,6 +251,6 @@ export default function Checkout() {
           </Box>
         </Grid>
       </Grid>
-      </>
+    </>
   );
 }
