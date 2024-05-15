@@ -4,7 +4,8 @@
   border: 1px solid rgb(228, 228, 228);
   border-radius: 0.8rem;
   overflow: hidden; /* Ensures the corners are fully rounded */
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 .sidebar {
@@ -14,7 +15,8 @@
   background-color: #3b331a;
   margin: 1rem;
   border-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 .logo {
@@ -25,25 +27,25 @@
   text-align: center;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 .logo-text {
-  color: #FFFF !important;
+  color: #ffff !important;
   font-size: 32px !important;
   margin-left: 10px; /* Adjust margin as needed */
 }
 
 .login-logo {
-  width: 60px !important;
-  height: 60px !important;
+  width: 50px !important;
+  height: 50px !important;
   margin-bottom: 0; /* Remove bottom margin */
 }
 
-.antd-divider{
+.antd-divider {
   margin: 17px 0 !important;
 }
-
 
 .time {
   font-size: 42px;
@@ -63,7 +65,7 @@
 }
 
 .ant-layout {
-  background: #FFFF; /* Replace with your desired color */
+  background: #ffff; /* Replace with your desired color */
 }
 
 .ant-menu-item:hover {
@@ -73,7 +75,6 @@
 /* Change background color for menu item when focused */
 .ant-menu-item-selected:focus {
   background-color: #c9a633 !important; /* Accent color */
-  
 }
 
 /* Change text color for menu items */
@@ -81,30 +82,34 @@
   color: rgba(49, 49, 54, 0.993) !important; /* Primary color */
 }
 
-.ant-menu-item{
+.ant-menu-item {
   color: black;
 }
 
-.ant-menu-item:hover{
+.ant-menu-item:hover {
   color: white !important;
 }
 
-.ant-menu-item-selected{
+.ant-menu-item-selected {
   background-color: rgba(49, 49, 54, 0.993) !important;
   color: white !important;
 }
 
-
 .ant-input:hover {
-  border-color: rgba(49, 49, 54, 0.993) !important; /* Change to your primary color */
+  border-color: rgba(
+    49,
+    49,
+    54,
+    0.993
+  ) !important; /* Change to your primary color */
 }
 
-.modal-submit{
+.modal-submit {
   background-color: rgba(49, 49, 54, 0.993);
   color: white;
 }
 
-.modal-submit:hover{
+.modal-submit:hover {
   background-color: #c9a633 !important;
   color: white !important;
   border-color: #c9a633 !important;
