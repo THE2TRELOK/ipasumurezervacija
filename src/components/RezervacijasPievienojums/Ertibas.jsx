@@ -19,29 +19,31 @@ import BathtubIcon from '@mui/icons-material/Bathtub';
 import ShowerIcon from '@mui/icons-material/Shower';
 import FireplaceIcon from '@mui/icons-material/Fireplace';
 import { useState } from 'react';
+
 const amenitiesList = [
   { value: 'wifi', label: 'Wi-Fi', icon: <WifiIcon /> },
-  { value: 'tv', label: 'Televizors', icon: <TvIcon /> },
-  { value: 'Bed', label: 'Gulta', icon: <BedIcon /> },
-  { value: 'laptop', label: 'Portatīvais dators', icon: <LaptopIcon /> },
-  { value: 'ac', label: 'Gaisa kondicionieris', icon: <AcUnitIcon /> },
-  { value: 'parking', label: 'Autostāvvieta', icon: <LocalParkingIcon /> },
-  { value: 'pool', label: 'Baseins', icon: <PoolIcon /> },
-  { value: 'kitchen', label: 'Virtuve', icon: <KitchenIcon /> },
-  { value: 'camera', label: 'Kamera', icon: <VideocamIcon /> },
+  { value: 'Televizors', label: 'Televizors', icon: <TvIcon /> },
+  { value: 'BGultaed', label: 'Gulta', icon: <BedIcon /> },
+  { value: 'Portatīvais dators', label: 'Portatīvais dators', icon: <LaptopIcon /> },
+  { value: 'Gaisa kondicionieris', label: 'Gaisa kondicionieris', icon: <AcUnitIcon /> },
+  { value: 'Autostāvvieta', label: 'Autostāvvieta', icon: <LocalParkingIcon /> },
+  { value: 'Baseins', label: 'Baseins', icon: <PoolIcon /> },
+  { value: 'Virtuve', label: 'Virtuve', icon: <KitchenIcon /> },
+  { value: 'Kamera', label: 'Kamera', icon: <VideocamIcon /> },
   { value: 'laundry', label: 'Veļas mazgātava', icon: <LocalLaundryServiceIcon /> },
-  { value: 'Grill', label: 'Grils', icon: <OutdoorGrillIcon /> },
-  { value: 'Sport', label: 'Sporta inventārs', icon: <FitnessCenterIcon /> },
+  { value: 'Grils', label: 'Grils', icon: <OutdoorGrillIcon /> },
+  { value: 'Sporta inventārs', label: 'Sporta inventārs', icon: <FitnessCenterIcon /> },
   { value: 'sauna', label: 'Pirts', icon: <BathtubIcon /> },
-  { value: 'shower', label: 'Duša', icon: <ShowerIcon /> },
+  { value: 'Duša', label: 'Duša', icon: <ShowerIcon /> },
   { value: 'kamins', label: 'Kamins', icon: <FireplaceIcon /> },
 ];
 
-export default function Ertibas() {
+export default function Ertibas({ onAmenitiesChange }) {
   const [selectedAmenities, setSelectedAmenities] = useState([]);
 
   const handleAmenitiesChange = (event, newAmenities) => {
     setSelectedAmenities(newAmenities);
+    onAmenitiesChange(newAmenities); // 
   };
 
   return (

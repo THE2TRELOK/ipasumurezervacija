@@ -14,18 +14,34 @@ import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import AddressForm from "./AddressForm";
 import Ertibas from "./Ertibas";
+import { db } from "../../firebase";
+import { doc } from "@firebase/firestore";
+import { setDoc, addDoc, collection } from "@firebase/firestore";
 import Apraksts from "./Apraksts";
 import { useState } from "react";
 const steps = ["Adrese", "Ērtības", "Bildes un papildu informacija"];
 
-function getStepContent(step) {
+function getStepContent(
+  step,
+  handleFormChange,
+  formData,
+  handleAprakstsChange,
+  aprakstsData
+) {
   switch (step) {
     case 0:
-      return <AddressForm />;
+      return (
+        <AddressForm handleFormChange={handleFormChange} formData={formData} />
+      );
     case 1:
       return <Ertibas />;
     case 2:
-      return <Apraksts />;
+      return (
+        <Apraksts
+          handleAprakstsChange={handleAprakstsChange}
+          aprakstsData={aprakstsData}
+        />
+      );
     default:
       throw new Error("Unknown step");
   }
@@ -33,6 +49,55 @@ function getStepContent(step) {
 
 export default function Checkout() {
   const [activeStep, setActiveStep] = useState(0);
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [formData, setFormData] = useState({
+    bookName: "",
+    address1: "",
+    address2: "",
+    city: "",
+    zip: "",
+  });
+
+  const [aprakstsData, setAprakstsData] = useState({
+    Apraksts1: "",
+    Nummurs: "",
+  });
+
+  const addresFetch = async (uid) => {
+    try {
+      const userDocRef = collection(db, "Houses");
+      await addDoc(userDocRef, {
+        Name: formData.bookName,
+        Surname: formData.address1,
+        Email: formData.address2,
+        Role: formData.city,
+        Status: formData.zip,
+        Description: aprakstsData.Apraksts1,
+        PeopleCount: aprakstsData.Nummurs,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      console.log("Данные успешно отправлены в Firestore!");
+    } catch (error) {
+      console.error("Ошибка при отправке данных в Firestore:", error);
+    }
+  };
+  const handleAprakstsChange = (name, value) => {
+    setAprakstsData({
+      ...aprakstsData,
+      [name]: value,
+    });
+  };
+  const handleFormChange = (name, value) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleAmenitiesChange = (newAmenities) => {
+    setSelectedAmenities(newAmenities);
+  };
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -193,7 +258,13 @@ export default function Checkout() {
               </Stack>
             ) : (
               <React.Fragment>
-                {getStepContent(activeStep)}
+                {getStepContent(
+                  activeStep,
+                  handleFormChange,
+                  formData,
+                  handleAprakstsChange,
+                  aprakstsData
+                )}
                 <Box
                   sx={{
                     display: "flex",
@@ -234,17 +305,29 @@ export default function Checkout() {
                       Atgriezties
                     </Button>
                   )}
-
-                  <Button
-                    variant="contained"
-                    endIcon={<ChevronRightRoundedIcon />}
-                    onClick={handleNext}
-                    sx={{
-                      width: { xs: "100%", sm: "fit-content" },
-                    }}
-                  >
-                    {activeStep === steps.length - 1 ? "Apstiprinat" : "Talak"}
-                  </Button>
+                  {activeStep === steps.length - 1 ? (
+                    <Button
+                      variant="contained"
+                      endIcon={<ChevronRightRoundedIcon />}
+                      onClick={addresFetch}
+                      sx={{
+                        width: { xs: "100%", sm: "fit-content" },
+                      }}
+                    >
+                      Apstiprinat
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      endIcon={<ChevronRightRoundedIcon />}
+                      onClick={handleNext}
+                      sx={{
+                        width: { xs: "100%", sm: "fit-content" },
+                      }}
+                    >
+                      Talak
+                    </Button>
+                  )}
                 </Box>
               </React.Fragment>
             )}

@@ -1,22 +1,33 @@
 import * as React from 'react';
-
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField'; 
+import { useState } from 'react';
+export default function Apraksts({handleAprakstsChange, aprakstsData}) {
+  const { Apraksts, nummurs,} = aprakstsData;
+  const [description,setDescription] = useState(Apraksts);
+  const [people,setPeople] = useState(nummurs);
 
-export default function Apraksts() {
+  const handleAprakstChange = (e) => {
+    setDescription(e.target.value);
+    handleAprakstsChange("Apraksts1", e.target.value);
+  };
+
+  const handleNummursChange = (e) => {
+    setPeople(e.target.value);
+    handleAprakstsChange("Nummurs", e.target.value);
+  };
+
   return (
     <Stack spacing={2}>
       <Typography variant="h6">Īsi aprakstiet savu māju</Typography>
       <TextField
         id="outlined-multiline-flexible"
         multiline
+        name="Apraksts1"
         maxRows={15}
+        value={description}
+        onChange={handleAprakstChange}
         fullWidth
         variant="outlined"
         placeholder="Ievadiet aprakstu savai mājai..."
@@ -25,6 +36,9 @@ export default function Apraksts() {
       <TextField
         id="outlined-number"
         type="number"
+        name="Nummurs"
+        value={people}
+        onChange={handleNummursChange}
         fullWidth
         variant="outlined"
         placeholder="Ievadiet cilvēku skaitu."
