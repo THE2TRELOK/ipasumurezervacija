@@ -1,4 +1,5 @@
   import React, { useState } from "react";
+  import { Result } from 'antd';
   import {
     CssBaseline,
     Box,
@@ -59,7 +60,14 @@
           <Bildes onImagesChange={handleImagesChange} />
         );
       default:
-        throw new Error("Unknown step");
+        return(
+          <Result
+    status="404"
+    title="404"
+    subTitle="Sorry, the page you visited does not exist."
+    extra={<Button type="primary">Back Home</Button>}
+  />
+        );
     }
   }
 
@@ -239,7 +247,7 @@
                 href="/profils"
                 sx={{ ml: "-8px" }}
               >
-                Back
+                Atgriezties
               </Button>
             </Box>
             <Box

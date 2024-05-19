@@ -31,12 +31,12 @@ const UserRegister = () => {
 
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
   const [isPassengerModalOpen, setIsPassengerModalOpen] = useState(false);
-  const [namee, setNamee] = useState("");
-  const [surname, setSurname] = useState(""); 
-  const [email, setEmail] = useState(""); 
-  const [password, setPassword] = useState("");
+  const [namee, setNamee] = useState(""); // Valsts lietotāja vārds
+  const [surname, setSurname] = useState(""); // Valsts lietotāja uzvārds
+  const [email, setEmail] = useState(""); // Valsts lietotāja e-pasts
+  const [password, setPassword] = useState(""); // Valsts lietotāja parole
   const [rowData, setRowData] = useState([]);
-  const [newPassword, setNewPassword] = useState("");
+  const [newPassword, setNewPassword] = useState(""); // Valsts jauna parole
 
   const [editUser, setEditUser] = useState(null);
 
@@ -81,6 +81,7 @@ const UserRegister = () => {
     const fetchData = async () => {
       const usersCollection = collection(db, "Users");
       try {
+        // Build a query using both where and orderBy that relies on a composite index
         const queryConstraint = query(
           usersCollection,
           orderBy("createdAt", "desc")

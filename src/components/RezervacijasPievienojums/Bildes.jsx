@@ -10,23 +10,25 @@ const Bildes = ({ onImagesChange }) => {
     const newImages = [...images, ...files];
 
     if (newImages.length > 10) {
-      setError("You cannot upload more than 10 images.");
+      setError("Jus nevarat lejupladet vairak par 10 atteliem");
+    } else if(newImages.length < 3){
+      setError("Pievienojiet vismaz 3 attelus")
     } else {  
       setImages(newImages);
       setError(null);
-      onImagesChange(newImages); // Передача изображений в родительский компонент
+      onImagesChange(newImages); 
     }
   };
 
   const handleImageRemove = (index) => {
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
-    onImagesChange(newImages); // Передача изображений в родительский компонент
+    onImagesChange(newImages); 
   };
 
   return (
     <div>
-      <Typography variant="h6">Upload photos (minimum 3)</Typography>
+      <Typography variant="h6">Pievienot fotoattelus (minimum 3)</Typography>
       <input
         accept="image/*"
         style={{ display: "none" }}
