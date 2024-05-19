@@ -25,7 +25,7 @@ const amenitiesList = [
   { value: 'Televizors', label: 'Televizors', icon: <TvIcon /> },
   { value: 'BGultaed', label: 'Gulta', icon: <BedIcon /> },
   { value: 'Portatīvais dators', label: 'Portatīvais dators', icon: <LaptopIcon /> },
-  { value: 'Gaisa kondicionieris', label: 'Gaisa kondicionieris', icon: <AcUnitIcon /> },
+  { value: 'kondicionieris', label: 'kondicionieris', icon: <AcUnitIcon /> },
   { value: 'Autostāvvieta', label: 'Autostāvvieta', icon: <LocalParkingIcon /> },
   { value: 'Baseins', label: 'Baseins', icon: <PoolIcon /> },
   { value: 'Virtuve', label: 'Virtuve', icon: <KitchenIcon /> },
@@ -56,8 +56,8 @@ export default function Ertibas({ onAmenitiesChange }) {
             aria-label="amenities"
             sx={{ justifyContent: 'center' }}
           >
-            <ToggleButton value={amenity.value} aria-label={amenity.label} sx={{ width: '200px',height:'120px', flexDirection: 'column', gap: 1 }}>
-              <Box>
+            <ToggleButton value={amenity.value} aria-label={amenity.label} sx={{ width: '160px',height:'105px', flexDirection: 'column', margin:"0" }}>
+              <Box marginTop={1}>
                 {amenity.icon}
               </Box>
               <Box>

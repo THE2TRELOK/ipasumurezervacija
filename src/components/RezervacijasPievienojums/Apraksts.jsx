@@ -34,6 +34,7 @@ export default function Apraksts({handleAprakstsChange, aprakstsData}) {
       />
       <Typography variant="h6">Cilvēku skaits, kas ērti jutīsies jūsu mājā  </Typography>
       <TextField
+        
         id="outlined-number"
         type="number"
         name="Nummurs"
