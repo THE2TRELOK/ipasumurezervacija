@@ -10,11 +10,13 @@ import Profils from "./components/Profils";
 import UserRegister from "./Admin/UserRegister.jsx";
 import Login from "./components/Login/Login";
 import Checkout from "./components/RezervacijasPievienojums/Checkout.jsx";
+import OfferDetails from "./components/start/OfferDetails.jsx";
 import { useEffect, useState } from "react";
 import { auth, getUserRole } from "./firebase.js";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin, Result, Button } from "antd";
 import { UserProvider, useUser } from "./components/UserContext";
+
 function NotFound() {
   const navigateToHome = () => {
     window.location.href = "/";
@@ -87,9 +89,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/header" element={<Header />} />
             <Route path="/calendarnbook" element={<Calendarnbook />} />
-            <Route path="/footer" element={<Footer />} />
             <Route path="/review" element={<Review />} />
             <Route path="/apartamenti" element={<Apartamenti />} />
             <Route path="/popular" element={<Popular />} />
@@ -115,9 +115,8 @@ function App() {
                 )
               }
             />
-            <Route path="*" element={<Navigate to="/not-found" />} />
-
-            <Route path="/not-found" element={<NotFound />} />
+            <Route path="/offer/:id" element={<OfferDetails />} /> {/* Новый маршрут */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </UserProvider>

@@ -7,33 +7,34 @@ import {
   Card,
   CardActionArea,
   CardContent,
-  Modal,
-  Fade,
-  Button,
 } from "@mui/material";
-import { Carousel, Image } from "antd";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
-import Header from "./Header/Header";
+import { Link } from "react-router-dom";
 import "../index.css";
+import Header from "./Header/Header";
+import Footer from "./Footer/Footer";
 
 export default function Apartamenti() {
   const itemsPerPage = 4;
   const [page, setPage] = useState(1);
   const [offers, setOffers] = useState([]);
-  const [selectedOffer, setSelectedOffer] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const fetchOffers = async () => {
-      const offersRef = collection(db, "Houses");
-      const q = query(offersRef, where("Status", "==", "Aizsutits"));
-      const querySnapshot = await getDocs(q);
-      const offersData = [];
-      querySnapshot.forEach((doc) => {
-        offersData.push({ id: doc.id, ...doc.data() });
-      });
-      setOffers(offersData);
+      try {
+        const offersRef = collection(db, "Houses");
+        const q = query(offersRef, where("Status", "==", "Aizsutits"));
+        const querySnapshot = await getDocs(q);
+        const offersData = [];
+        querySnapshot.forEach((doc) => {
+          offersData.push({ id: doc.id, ...doc.data() });
+        });
+        setOffers(offersData);
+        console.log("Fetched offers:", offersData); // Debugging line
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      }
     };
 
     fetchOffers();
@@ -43,50 +44,80 @@ export default function Apartamenti() {
     setPage(newPage);
   };
 
-  const handleOpenModal = (offer) => {
-    setSelectedOffer(offer);
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentOffers = offers.slice(startIndex, endIndex);
 
   return (
-    <div style={{ backgroundColor: "rgba(49, 49, 54, 0.993)", padding: "20px" }}>
+    <>
       <Header />
-      <Box p={4}>
-        <Typography variant="h4" gutterBottom style={{ color: "#d4af37" }}>
-          Visi piedāvājumi
+      <div style={{ backgroundColor: "#f0f0f0", padding: "20px" }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          style={{ color: "#333", textAlign: "center", marginBottom: "20px" }}
+        >
+          Visi piedavajumi
         </Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} justifyContent="center">
           {currentOffers.map((offer, index) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <Card style={{ backgroundColor: "#d4af37", height: "100%" }}>
-                <CardActionArea onClick={() => handleOpenModal(offer)}>
-                  <Carousel autoplay>
-                    {offer.Images.map((image, index) => (
-                      <div key={index}>
-                        <Image src={image} alt={`Image ${index}`} style={{ width: "100%" }} />
-                      </div>
-                    ))}
-                  </Carousel>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      {offer.Name}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      {offer.Description.length > 100
-                        ? offer.Description.substring(0, 100) + "..."
-                        : offer.Description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
+              <Link
+                to={`/offer/${offer.id}`}
+                style={{ textDecoration: "none" }}
+              >
+                <Card
+                  style={{
+                    backgroundColor: "#fff",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <CardActionArea>
+                    <img
+                      src={offer.Images[0]}
+                      alt={offer.Name}
+                      style={{
+                        width: "100%",
+                        height: "200px",
+                        objectFit: "cover",
+                        borderTopLeftRadius: "8px",
+                        borderTopRightRadius: "8px",
+                      }}
+                    />
+                    <CardContent>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        style={{ color: "#333" }}
+                      >
+                        {offer.Name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        component="p"
+                      >
+                        Pilseta: {offer.City}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        component="p"
+                      >
+                        Cena: {offer.Price}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        component="p"
+                      >
+                        Ietilpiba: {offer.PeopleCount} cilveki
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Link>
             </Grid>
           ))}
         </Grid>
@@ -95,62 +126,11 @@ export default function Apartamenti() {
             count={Math.ceil(offers.length / itemsPerPage)}
             page={page}
             onChange={handleChangePage}
-            variant="outlined"
-            shape="rounded"
-            style={{ color: "#d4af37" }}
+            color="primary"
           />
         </Box>
-        <Modal
-          open={openModal}
-          onClose={handleCloseModal}
-          closeAfterTransition
-         
-        >
-          <Fade in={openModal}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "white",
-                boxShadow: 24,
-                p: 4,
-                maxHeight: "80%",
-                overflowY: "auto",
-                borderRadius: "8px",
-                maxWidth: "90vw",
-                width: "fit-content",
-              }}
-            >
-              <Typography variant="h5" gutterBottom style={{ color: "#d4af37" }}>
-                {selectedOffer?.Name}
-              </Typography>
-              <Carousel autoplay prevArrow={<Button>←</Button>} nextArrow={<Button>→</Button>}>
-                {selectedOffer?.Images.map((image, index) => (
-                  <div key={index}>
-                    <Image src={image} alt={`Image ${index}`} style={{ width: "100%" }} />
-                  </div>
-                ))}
-              </Carousel>
-              <Typography gutterBottom>
-                <strong>Apraksts:</strong> {selectedOffer?.Description}
-              </Typography>
-              <Typography gutterBottom>
-                <strong>Ietilpība:</strong> {selectedOffer?.PeopleCount}
-              </Typography>
-              <Typography gutterBottom>
-                <strong>Ertibas:</strong> {selectedOffer?.Amenities.join(", ")}
-              </Typography>
-              <Box display="flex" justifyContent="center">
-                <Button variant="contained" onClick={handleCloseModal}>
-                  Aizvērt
-                </Button>
-              </Box>
-            </Box>
-          </Fade>
-        </Modal>
-      </Box>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }

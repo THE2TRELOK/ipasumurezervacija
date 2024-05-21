@@ -11,9 +11,7 @@ const Bildes = ({ onImagesChange }) => {
 
     if (newImages.length > 10) {
       setError("Jus nevarat lejupladet vairak par 10 atteliem");
-    } else if(newImages.length < 3){
-      setError("Pievienojiet vismaz 3 attelus")
-    } else {  
+    }  else {  
       setImages(newImages);
       setError(null);
       onImagesChange(newImages); 
@@ -39,7 +37,7 @@ const Bildes = ({ onImagesChange }) => {
       />
       <label htmlFor="image-upload">
         <Button variant="contained" component="span">
-          Upload photos
+          Augšpieladet attelus
         </Button>
       </label>
       {error && <Typography color="error">{error}</Typography>}

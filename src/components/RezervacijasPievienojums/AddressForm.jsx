@@ -11,14 +11,14 @@ const FormGrid = styled(Grid)(() => ({
 
 export default function AddressForm({ handleFormChange, formData }) {
   const { bookName, address1, address2, city, zip } = formData;
-  // Стейты для управления данными формы
+
   const [localBookName, setLocalBookName] = useState(bookName);
   const [localAddress1, setLocalAddress1] = useState(address1);
   const [localAddress2, setLocalAddress2] = useState(address2);
   const [localCity, setLocalCity] = useState(city);
   const [localZip, setLocalZip] = useState(zip);
 
-  // Функции обработчики изменения данных в форме
+
   const handleBookNameChange = (e) => {
     setLocalBookName(e.target.value);
     handleFormChange("bookName", e.target.value);
