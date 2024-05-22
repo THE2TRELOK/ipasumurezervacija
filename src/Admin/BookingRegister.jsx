@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Layout, Space, message } from "antd";
 import { AgGridReact } from "ag-grid-react";
-import { db,auth } from "../firebase";
+import { db, auth } from "../firebase";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import "./UserRegisterCSS.css";
@@ -23,30 +23,33 @@ import {
   where,
 } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth"; // Import auth functions from Firebase
+import { useNavigate } from "react-router";
 
 const { Content } = Layout;
 
-const UserRegister = () => {
+const Bookingregister = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
   const [isPassengerModalOpen, setIsPassengerModalOpen] = useState(false);
-  const [namee, setNamee] = useState(""); // Valsts lietotāja vārds
-  const [surname, setSurname] = useState(""); // Valsts lietotāja uzvārds
-  const [email, setEmail] = useState(""); // Valsts lietotāja e-pasts
-  const [password, setPassword] = useState(""); // Valsts lietotāja parole
+  const [namee, setNamee] = useState("");
+  const [surname, setSurname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [rowData, setRowData] = useState([]);
-  const [newPassword, setNewPassword] = useState(""); // Valsts jauna parole
+  const [newPassword, setNewPassword] = useState("");
 
   const [editUser, setEditUser] = useState(null);
 
+  const navigate = useNavigate;
+
   const columnDefs = [
     { headerName: "UID", field: "uid", flex: 1 },
-    { headerName: "Vārds", field: "Name", flex: 1 },
-    { headerName: "Uzvārds", field: "Surname", flex: 1 },
-    { headerName: "E-pasts", field: "Email", flex: 1 },
+    { headerName: "Pilseta", field: "City", flex: 1 },
+    { headerName: "Vards", field: "Name", flex: 1 },
+    { headerName: "Saimnieks", field: "Owner", flex: 1 },
     { headerName: "Loma", field: "Role", flex: 1 },
-    { headerName: "Statuss", field: "Status", flex: 1 },
+    { headerName: "Uztaisīts", field: "createdAt", flex: 1 },
     {
       headerName: "",
       field: "Actions",
@@ -58,10 +61,10 @@ const UserRegister = () => {
             className="edit-orange"
             icon={<EditOutlined />}
             style={{ marginRight: 10 }}
-            disabled={params.data.Status !== "Aktīvs"} // Disable edit button if user status is not Aktīvs
+            disabled={params.data.Status !== "Apstiprināts"} // Disable edit button if user status is not Aktīvs
             onClick={() => editUserDetails(params.data)}
           />
-          {params.data.Status === "Aktīvs" ? (
+          {params.data.Status === "Apstiprināts" ? (
             <Button
               icon={<DeleteOutlined />}
               onClick={() => deactivateUser(params.data)}
@@ -79,9 +82,8 @@ const UserRegister = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const usersCollection = collection(db, "Users");
+      const usersCollection = collection(db, "Houses");
       try {
-        // Build a query using both where and orderBy that relies on a composite index
         const queryConstraint = query(
           usersCollection,
           orderBy("createdAt", "desc")
@@ -165,44 +167,20 @@ const UserRegister = () => {
     setNewPassword(e.target.value);
   };
   const deactivateUser = async (user) => {
-    console.log(`Neaktīvs lietotājs:`, user);
     try {
-      const userDocRef = doc(db, "Users", user.uid);
-      await setDoc(userDocRef, {
-        ...user,
-        Status: "Inactive",
-      });
-      // Atjauno vietējo stāvokli pēc datubāzes atjaunināšanas
-      const updatedRowData = rowData.map((rowDataItem) => {
-        if (rowDataItem.uid === user.uid) {
-          return { ...rowDataItem, Status: "Inactive" };
-        }
-        return rowDataItem;
-      });
-      setRowData(updatedRowData);
-      message.success("Lietotājs veiksmīgi deaktivēts");
-    } catch (error) {
-      console.error(
-        "Kļūda lietotāja deaktivēšanā: ",
-        error.code,
-        error.message
+      const userDocRef = doc(db, "Houses", user.uid); // Make sure we are updating the Houses collection
+      await setDoc(
+        userDocRef,
+        {
+          Status: "Deaktivizēts",
+          updatedAt: new Date(), // Add an updatedAt field to track updates
+        },
+        { merge: true } // Use merge option to update only the specified fields
       );
-      message.error("Kļūda lietotāja deaktivēšanā");
-    }
-  };
-
-  const activateUser = async (user) => {
-    console.log(`Aktīvs lietotājs:`, user);
-    try {
-      const userDocRef = doc(db, "Users", user.uid);
-      await setDoc(userDocRef, {
-        ...user,
-        Status: "Aktīvs",
-      });
-      // Atjauno vietējo stāvokli pēc datubāzes atjaunināšanas
+      // Update local state after database update
       const updatedRowData = rowData.map((rowDataItem) => {
         if (rowDataItem.uid === user.uid) {
-          return { ...rowDataItem, Status: "Aktīvs" };
+          return { ...rowDataItem, Status: "Deaktivizēts" };
         }
         return rowDataItem;
       });
@@ -217,7 +195,36 @@ const UserRegister = () => {
       message.error("Kļūda lietotāja aktivizēšanā");
     }
   };
-  
+
+  const activateUser = async (user) => {
+    try {
+      const userDocRef = doc(db, "Houses", user.uid); // Make sure we are updating the Houses collection
+      await setDoc(
+        userDocRef,
+        {
+          Status: "Apstiprināts",
+          updatedAt: new Date(), // Add an updatedAt field to track updates
+        },
+        { merge: true } // Use merge option to update only the specified fields
+      );
+      // Update local state after database update
+      const updatedRowData = rowData.map((rowDataItem) => {
+        if (rowDataItem.uid === user.uid) {
+          return { ...rowDataItem, Status: "Apstiprināts" };
+        }
+        return rowDataItem;
+      });
+      setRowData(updatedRowData);
+      message.success("Lietotājs veiksmīgi aktivizēts");
+    } catch (error) {
+      console.error(
+        "Kļūda lietotāja aktivizēšanā: ",
+        error.code,
+        error.message
+      );
+      message.error("Kļūda lietotāja aktivizēšanā");
+    }
+  };
 
   const updateUserDetails = async (values, uid) => {
     try {
@@ -333,4 +340,4 @@ const UserRegister = () => {
   );
 };
 
-export default UserRegister;
+export default Bookingregister;

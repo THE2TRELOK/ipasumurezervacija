@@ -24,7 +24,7 @@ export default function Apartamenti() {
     const fetchOffers = async () => {
       try {
         const offersRef = collection(db, "Houses");
-        const q = query(offersRef, where("Status", "==", "Aizsutits"));
+        const q = query(offersRef, where("Status", "==", "Apstiprināts"));
         const querySnapshot = await getDocs(q);
         const offersData = [];
         querySnapshot.forEach((doc) => {

@@ -10,10 +10,11 @@ const FormGrid = styled(Grid)(() => ({
 }));
 
 export default function AddressForm({ handleFormChange, formData }) {
-  const { bookName, address1, address2, city, zip } = formData;
+  const { bookName, address1, address2, city, zip,cena } = formData;
 
   const [localBookName, setLocalBookName] = useState(bookName);
   const [localAddress1, setLocalAddress1] = useState(address1);
+  const [localCena,setCena] = useState(cena);
   const [localAddress2, setLocalAddress2] = useState(address2);
   const [localCity, setLocalCity] = useState(city);
   const [localZip, setLocalZip] = useState(zip);
@@ -22,6 +23,11 @@ export default function AddressForm({ handleFormChange, formData }) {
   const handleBookNameChange = (e) => {
     setLocalBookName(e.target.value);
     handleFormChange("bookName", e.target.value);
+  };
+
+  const handleCena = (e) => {
+    setCena(e.target.value);
+    handleFormChange("cena", e.target.value);
   };
 
   const handleAddress1Change = (e) => {
@@ -103,6 +109,18 @@ export default function AddressForm({ handleFormChange, formData }) {
           type="zip"
           placeholder="LV-4092"
           autoComplete="shipping postal-code"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={12}>
+        <OutlinedInput
+          id="cena"
+          name="cena"
+          value={localCena}
+          onChange={handleCena}
+          type="cena"
+          placeholder="Cena"
+          autoComplete="Cena"
           required
         />
       </FormGrid>

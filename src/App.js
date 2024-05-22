@@ -16,7 +16,8 @@ import { auth, getUserRole } from "./firebase.js";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin, Result, Button } from "antd";
 import { UserProvider, useUser } from "./components/UserContext";
-
+import Manasrezervacijas from "./components/RezervacijasPievienojums/ManasRezervacijas.jsx";
+import Bookingregister from "./Admin/BookingRegister.jsx";
 function NotFound() {
   const navigateToHome = () => {
     window.location.href = "/";
@@ -93,7 +94,36 @@ function App() {
             <Route path="/review" element={<Review />} />
             <Route path="/apartamenti" element={<Apartamenti />} />
             <Route path="/popular" element={<Popular />} />
-            <Route path="/checkout" element={<Checkout />} />
+            <Route
+              path="/bookingregister"
+              element={
+                userRole === "Admin"  ? (
+                  <Bookingregister />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+             <Route
+              path="/manasrezervacijas"
+              element={
+                userRole === "User" || userRole === "Admin"? (
+                  <Manasrezervacijas />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+              <Route
+              path="/checkout"
+              element={
+                userRole === "User" || userRole === "Admin"? (
+                  <Checkout />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
             <Route
               path="/profils"
               element={

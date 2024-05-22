@@ -95,6 +95,7 @@ export default function Checkout() {
   const [formData, setFormData] = useState({
     bookName: "",
     address1: "",
+    cena: "",
     address2: "",
     city: "",
     zip: "",
@@ -120,6 +121,7 @@ export default function Checkout() {
         Name: formData.bookName,
         Address1: formData.address1,
         Address2: formData.address2,
+        Price: formData.cena,
         City: formData.city,
         Zip: formData.zip,
         Status: "Aizsutits",
@@ -181,8 +183,8 @@ export default function Checkout() {
   };
 
   const validateAddressForm = () => {
-    const { bookName, address1, address2, city, zip } = formData;
-    return bookName && address1 && address2 && city && zip;
+    const { bookName, address1, address2, city, zip, cena } = formData;
+    return bookName && address1 && address2 && city && zip && cena;
   };
 
   const validateErtibas = () => {

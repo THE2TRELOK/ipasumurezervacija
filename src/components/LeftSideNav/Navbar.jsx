@@ -80,12 +80,19 @@ const Navbar = () => {
             </Menu.Item>
           </>
         )}
+         {userRole === "Admin" && (
+          <>
+            <Menu.Item key="/bookingregister" icon={<FileSearchOutlined />}>
+              <Link to="/bookingregister">Māju reģistrs</Link>
+            </Menu.Item>
+          </>
+        )}
         <Menu.Item key="/profils" icon={<DatabaseOutlined />}>
           <Link to="/profils">Profils</Link>
         </Menu.Item>
         <Divider className="antd-divider" />
-        <Menu.Item key="/piedavajums" icon={<SettingOutlined />}>
-          <Link to="/piedavajums">Mana māja</Link>
+        <Menu.Item key="/manasrezervacijas" icon={<SettingOutlined />}>
+          <Link to="/manasrezervacijas">Mana māja</Link>
         </Menu.Item>
         <Divider className="antd-divider" />
         <Menu.Item key="/settings" icon={<SettingOutlined />}>
@@ -98,6 +105,9 @@ const Navbar = () => {
             </Menu.Item>
           </>
         )}
+         <Menu.Item key="/" icon={<SettingOutlined />}>
+          <Link to="/">Iziet no kabineta</Link>
+        </Menu.Item>
         <Menu.Item
           key="/logout"
           icon={<LogoutOutlined />}
