@@ -16,7 +16,7 @@ import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 
 export default function Apartamenti() {
-  const itemsPerPage = 4;
+  const itemsPerPage = 8;
   const [page, setPage] = useState(1);
   const [offers, setOffers] = useState([]);
 
@@ -25,7 +25,7 @@ export default function Apartamenti() {
       try {
         const offersRef = collection(db, "Houses");
         const q = query(offersRef, where("Status", "==", "Apstiprināts"));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(q); 
         const offersData = [];
         querySnapshot.forEach((doc) => {
           offersData.push({ id: doc.id, ...doc.data() });
@@ -49,9 +49,9 @@ export default function Apartamenti() {
   const currentOffers = offers.slice(startIndex, endIndex);
 
   return (
-    <>
+    <Box display="flex" flexDirection="column" minHeight="100vh">
       <Header />
-      <div style={{ backgroundColor: "#f0f0f0", padding: "20px" }}>
+      <Box flex="1" bgcolor="#f0f0f0" p={3}>
         <Typography
           variant="h4"
           gutterBottom
@@ -129,8 +129,8 @@ export default function Apartamenti() {
             color="primary"
           />
         </Box>
-      </div>
+      </Box>
       <Footer />
-    </>
+    </Box>
   );
 }

@@ -29,7 +29,7 @@ function App() {
     const querySnapshot = await getDocs(reissCollection);
     let maxId = 0;
     querySnapshot.forEach((doc) => {
-      const id = parseInt(doc.id.substring(1)); // iznem # no rindas lai dabut pedeja identifikatoru
+      const id = parseInt(doc.id.substring(1)); // iznem # no rindas lai dabut pedeja identifikatoru      
       if (id > maxId) {
         maxId = id;
       }
