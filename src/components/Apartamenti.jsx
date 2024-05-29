@@ -25,7 +25,7 @@ export default function Apartamenti() {
       try {
         const offersRef = collection(db, "Houses");
         const q = query(offersRef, where("Status", "==", "Apstiprināts"));
-        const querySnapshot = await getDocs(q); 
+        const querySnapshot = await getDocs(q);
         const offersData = [];
         querySnapshot.forEach((doc) => {
           offersData.push({ id: doc.id, ...doc.data() });
@@ -51,7 +51,7 @@ export default function Apartamenti() {
   return (
     <Box display="flex" flexDirection="column" minHeight="100vh">
       <Header />
-      <Box flex="1" bgcolor="#f0f0f0" p={3}>
+      <Box flex="1" bgcolor="#f0f0f0" p={10}>
         <Typography
           variant="h4"
           gutterBottom
@@ -59,7 +59,7 @@ export default function Apartamenti() {
         >
           Visi piedavajumi
         </Typography>
-        <Grid container spacing={3} justifyContent="center">
+        <Grid container spacing={5} justifyContent="center">
           {currentOffers.map((offer, index) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <Link
@@ -105,7 +105,7 @@ export default function Apartamenti() {
                         color="textSecondary"
                         component="p"
                       >
-                        Cena: {offer.Price}
+                        Cena: {offer.Price} €
                       </Typography>
                       <Typography
                         variant="body2"
