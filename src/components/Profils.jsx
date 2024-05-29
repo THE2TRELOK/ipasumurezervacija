@@ -1,27 +1,43 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Layout,
-  Space,
-  message,
-  Modal,
-  Input,
-  Upload,
-  Avatar,
-} from "antd";
+import { message, Upload, Layout } from "antd";
 import { db, auth } from "../firebase";
-import { LikeOutlined } from "@ant-design/icons";
-import { Col, Row, Statistic } from "antd";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { Box, Paper } from "@mui/material";
-import {
-  getStorage,
-  ref,
-  uploadString,
-  getDownloadURL,
-} from "firebase/storage";
+import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
 import Navbar from "../components/LeftSideNav/Navbar";
+import {
+  Box,
+  Paper,
+  Typography,
+  Avatar as MuiAvatar,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Button,
+  Divider,
+  Grid,
+  Container,
+} from "@mui/material";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { LikeOutlined } from "@ant-design/icons";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 const { Content } = Layout;
+
+const theme = createTheme({
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundImage: "url('https://img.freepik.com/free-vector/gray-abstract-wireframe-background_53876-99911.jpg')",
+          backgroundSize: "cover",
+          backgroundAttachment: "fixed",
+        },
+      },
+    },
+  },
+});
 
 const Profils = () => {
   const [userData, setUserData] = useState(null);
@@ -90,93 +106,132 @@ const Profils = () => {
   };
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Layout style={{ minHeight: "100vh" }}>
         <Navbar />
         <Layout className="site-layout">
           <Content style={{ margin: "16px 16px" }}>
-            <Space direction="vertical" style={{ width: "100%" }}>
-              {userData && (
-                <Box
+            <Grid container spacing={4}>
+              <Grid item xs={8} md={3}>
+                <Paper
+                  elevation={8}
                   sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
+                    position: "sticky",
+                    top: "16px",
+                    padding: "1rem",
+                    textAlign: "center",
+                    borderRadius: "1rem",
                   }}
                 >
-                  <Paper
-                    elevation={8}
-                    style={{ padding: 40, textAlign: "center", width: 500 }}
-                  >
-                    <Space direction="vertical">
-                      <Avatar
+                  {userData && (
+                    <Box>
+                      <MuiAvatar
                         alt={userData.Name}
                         src={editedImage || userData.Image}
-                        style={{ width: 200, height: 200, margin: "0 auto" }}
+                        sx={{ width: 80, height: 80, margin: "0 auto" }}
                       />
-                      <h2>
-                        {userData.Name}{" "}
-                        <Statistic
-                          title="Atsauksmes"
-                          value={200}
-                          prefix={<LikeOutlined />}
-                        />
-                      </h2>
-                      <p>Epasts: {userData.Email}</p>
-                      <p>Uzvards: {userData.Surname}</p>
-                      <p>
+                      <Typography variant="h6" sx={{ marginTop: "1rem" }}>
+                        {userData.Name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ marginBottom: "1rem" }}>
+                        <LikeOutlined style={{ verticalAlign: "middle" }} /> 200 Atsauksmes
+                      </Typography>
+                      <Divider sx={{ marginY: "1rem" }} />
+                      <Typography variant="body2" color="textSecondary">
                         Registracijas datums:{" "}
                         {userData.createdAt
                           ? userData.createdAt.toDate().toLocaleDateString()
                           : "Unknown"}
-                      </p>
-                      <Button onClick={() => setEditModalVisible(true)}>
+                      </Typography>
+                    </Box>
+                  )}
+                </Paper>
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <Container>
+                  {userData && (
+                    <Box>
+                      <Typography variant="h6" gutterBottom>
+                        Jūsu informācija
+                      </Typography>
+                      <Typography variant="body1" sx={{ marginTop: "1rem" }}>
+                        Vards: {userData.Name}
+                      </Typography>
+                      <Typography variant="body1" sx={{ marginTop: "0.5rem" }}>
+                        Uzvards: {userData.Surname}
+                      </Typography>
+                      <Typography variant="body1" sx={{ marginTop: "0.5rem" }}>
+                        Epasts: {userData.Email}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        sx={{ marginTop: "2rem" }}
+                        onClick={() => setEditModalVisible(true)}
+                      >
                         Rediģet
                       </Button>
-                    </Space>
-                  </Paper>
-                </Box>
-              )}
-            </Space>
+                    </Box>
+                  )}
+                </Container>
+              </Grid>
+            </Grid>
           </Content>
         </Layout>
       </Layout>
-      {/* Модальное окно для редактирования данных */}
-      <Modal
-        title="Rediģet datus"
-        visible={editModalVisible}
-        onCancel={() => setEditModalVisible(false)}
-        onOk={updateUserData}
+      <Dialog
+        open={editModalVisible}
+        onClose={() => setEditModalVisible(false)}
       >
-        <Input
-          value={editedName}
-          onChange={(e) => setEditedName(e.target.value)}
-          placeholder="Vards"
-        />
-        <Input
-          value={editedSurname}
-          onChange={(e) => setEditedSurname(e.target.value)}
-          placeholder="Uzvards"
-        />
-        {/* Компонент для загрузки фото */}
-        <Upload
-          name="avatar"
-          action=""
-          showUploadList={false}
-          beforeUpload={(file) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-              setEditedImage(reader.result);
-            };
-            return false;
-          }}
-        >
-          <Button>Augšpieladet attelu</Button>
-        </Upload>
-      </Modal>
-    </>
+        <DialogTitle>Rediģet datus</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Vards"
+            value={editedName}
+            onChange={(e) => setEditedName(e.target.value)}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Uzvards"
+            value={editedSurname}
+            onChange={(e) => setEditedSurname(e.target.value)}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              marginTop: "1rem",
+            }}
+          >
+            <Upload
+              name="avatar"
+              action=""
+              showUploadList={false}
+              beforeUpload={(file) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                  setEditedImage(reader.result);
+                };
+                return false;
+              }}
+            >
+              <Button variant="contained" startIcon={<UploadFileIcon />}>
+                Augšpieladet attelu
+              </Button>
+            </Upload>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditModalVisible(false)}>Cancel</Button>
+          <Button onClick={updateUserData} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </ThemeProvider>
   );
 };
 
