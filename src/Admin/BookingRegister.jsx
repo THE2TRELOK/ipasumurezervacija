@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Layout, Space, message } from "antd";
+import { Button, Layout, Space, message, Modal, Avatar, Carousel } from "antd";
 import { AgGridReact } from "ag-grid-react";
 import { db, auth } from "../firebase";
 import "ag-grid-community/styles/ag-grid.css";
@@ -12,6 +12,7 @@ import {
   EditOutlined,
   UserAddOutlined,
   CheckOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import {
   doc,
@@ -21,6 +22,7 @@ import {
   query,
   orderBy,
   where,
+  getDoc,
 } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth"; // Import auth functions from Firebase
 import { useNavigate } from "react-router";
@@ -29,7 +31,6 @@ const { Content } = Layout;
 
 const Bookingregister = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
   const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
   const [isPassengerModalOpen, setIsPassengerModalOpen] = useState(false);
   const [namee, setNamee] = useState("");
@@ -38,8 +39,9 @@ const Bookingregister = () => {
   const [password, setPassword] = useState("");
   const [rowData, setRowData] = useState([]);
   const [newPassword, setNewPassword] = useState("");
-
   const [editUser, setEditUser] = useState(null);
+  const [houseDetails, setHouseDetails] = useState(null);
+  const [isHouseModalOpen, setIsHouseModalOpen] = useState(false);
 
   const navigate = useNavigate;
 
@@ -75,6 +77,10 @@ const Bookingregister = () => {
               onClick={() => activateUser(params.data)}
             />
           )}
+          <Button
+            icon={<EyeOutlined />}
+            onClick={() => viewHouseDetails(params.data)}
+          />
         </>
       ),
     },
@@ -185,14 +191,14 @@ const Bookingregister = () => {
         return rowDataItem;
       });
       setRowData(updatedRowData);
-      message.success("Lietotājs veiksmīgi aktivizēts");
+      message.success("Lietotājs veiksmīgi deaktivizēts");
     } catch (error) {
       console.error(
-        "Kļūda lietotāja aktivizēšanā: ",
+        "Kļūda lietotāja deaktivizēšanā: ",
         error.code,
         error.message
       );
-      message.error("Kļūda lietotāja aktivizēšanā");
+      message.error("Kļūda lietotāja deaktivizēšanā");
     }
   };
 
@@ -254,89 +260,126 @@ const Bookingregister = () => {
   };
 
   const editUserDetails = (user) => {
-    console.log("Editing user:", user); // Log to see what is being passed
-    setEditUser({
-      uid: user.uid,
-      name: user.Name,
-      surname: user.Surname,
-      email: user.Email,
-      role: user.Role,
-      status: user.Status,
-    });
+    setEditUser(user);
+    setNamee(user.Name);
+    setSurname(user.Surname);
+    setEmail(user.Email);
     setIsEditModalOpen(true);
   };
 
+  const viewHouseDetails = async (house) => {
+    try {
+      const houseDocRef = doc(db, "Houses", house.uid);
+      const houseDoc = await getDoc(houseDocRef);
+      if (houseDoc.exists()) {
+        setHouseDetails(houseDoc.data());
+        setIsHouseModalOpen(true);
+      } else {
+        message.error("House details not found.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch house details:", error);
+      message.error("Failed to fetch house details.");
+    }
+  };
+
+  const handleHouseModalOk = () => {
+    setIsHouseModalOpen(false);
+    setHouseDetails(null);
+  };
+
+  const handleHouseModalCancel = () => {
+    setIsHouseModalOpen(false);
+    setHouseDetails(null);
+  };
+
   return (
-    <>
-      <Layout style={{ minHeight: "100vh" }}>
-        <Navbar />
-        <Layout className="site-layout">
-          <Content style={{ margin: "16px 16px" }}>
-            <Space direction="vertical" style={{ width: "100%" }}>
-              <Button.Group style={{ marginBottom: "65px" }}>
-                <Button
-                  icon={<UserAddOutlined />}
-                  onClick={() => setIsManagerModalOpen(true)}
-                >
-                  Pievienot adminu
-                </Button>
-                <Button
-                  icon={<UserAddOutlined />}
-                  onClick={() => setIsPassengerModalOpen(true)}
-                >
-                  Pievienot lietotaju
-                </Button>
-              </Button.Group>
-
-              <div className="ag-theme-material" style={{ height: "80vh" }}>
-                <AgGridReact
-                  columnDefs={columnDefs}
-                  rowData={rowData}
-                  pagination={true}
-                />
-              </div>
-            </Space>
-          </Content>
-        </Layout>
+    <Layout>
+      <Navbar />
+      <Layout>
+        <Content style={{ padding: "20px" }}>
+          <Space
+            direction="horizontal"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          >
+            <h2>Registration Details</h2>
+            <Button
+              type="primary"
+              icon={<UserAddOutlined />}
+              onClick={() => setIsManagerModalOpen(true)}
+            >
+              Add New User
+            </Button>
+          </Space>
+          <div className="ag-theme-material" style={{ height: 600 }}>
+            <AgGridReact
+              rowData={rowData}
+              columnDefs={columnDefs}
+              pagination={true}
+              paginationPageSize={10}
+              animateRows={true}
+              domLayout="autoHeight"
+              overlayLoadingTemplate={`<span class="ag-overlay-loading-center">Loading...</span>`}
+              overlayNoRowsTemplate={`<span class="ag-overlay-no-rows-center">No data available</span>`}
+            />
+          </div>
+        </Content>
       </Layout>
-
       <RegistrationModal
-        props={"PIEVIENOT Adminu"}
-        title="Jauns menedžera konts"
-        visible={isManagerModalOpen}
-        onOk={(values) => handleOk(values, "Admin")}
-        onCancel={handleCancel}
-        isEditMode={isEditModalOpen} // Padod isEditMode īpašību, pamatojoties uz isEditModalOpen stāvokli
-      />
-
-      <RegistrationModal
-        props={"PIEVIENOT Lietotaju"}
-        title="Jauns pasažiera konts"
-        visible={isPassengerModalOpen}
-        onOk={(values) => handleOk(values, "Lietotajs")}
-        onCancel={handleCancel}
-        isEditMode={isEditModalOpen} // Padod isEditMode īpašību, pamatojoties uz isEditModalOpen stāvokli
-      />
-
-      <RegistrationModal
-        props={"SAGLABĀT IZMAIŅAS"}
-        title="Rediģēt lietotāja kontu"
         visible={isEditModalOpen}
-        onOk={(values) => handleOk(values, editUser.role)} // Pass role from editUser
         onCancel={handleCancel}
-        initialValues={
-          editUser
-            ? {
-                name: editUser.name,
-                surname: editUser.surname,
-                email: editUser.email,
-                password: "",
-              }
-            : {}
-        }
-        isEditMode={true}
+        onCreate={handleOk}
+        initialValues={{
+          name: namee,
+          surname: surname,
+          email: email,
+          password: password,
+        }}
+        editUser={editUser} // Pass editUser prop to RegistrationModal
+        handlePasswordChange={handlePasswordChange}
+        newPassword={newPassword}
       />
-    </>
+      <Modal
+        title="House Details"
+        visible={isHouseModalOpen}
+        onOk={handleHouseModalOk}
+        onCancel={handleHouseModalCancel}
+        footer={[
+          <Button key="back" onClick={handleHouseModalCancel}>
+            Close
+          </Button>,
+        ]}
+      >
+        {houseDetails && (
+          <div>
+            <p><strong>Name:</strong> {houseDetails.Name}</p>
+            <p><strong>City:</strong> {houseDetails.City}</p>
+            <p><strong>Owner:</strong> {houseDetails.Owner}</p>
+            <p><strong>Role:</strong> {houseDetails.Role}</p>
+            <p><strong>Status:</strong> {houseDetails.Status}</p>
+            <Carousel autoplay>
+              {houseDetails.Images &&
+                houseDetails.Images.map((image, index) => (
+                  <div key={index}>
+                    <img
+                      src={image}
+                      alt={`House Image ${index + 1}`}
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  </div>
+                ))}
+            </Carousel>
+            <p><strong>Description:</strong> {houseDetails.Description}</p>
+            {/* Add more details as needed */}
+          </div>
+        )}
+      </Modal>
+    </Layout>
   );
 };
 
