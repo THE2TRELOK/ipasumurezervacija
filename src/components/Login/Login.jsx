@@ -91,6 +91,7 @@ export default function Login() {
         Surname: surname,
         Email: email,
         Role: "User",
+        balance: 1000,
         Status: "Active",
       });
 
