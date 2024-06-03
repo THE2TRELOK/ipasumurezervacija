@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { collection, doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { collection, doc, getDoc, setDoc, updateDoc, getDocs } from "firebase/firestore";
+import { db, auth } from "../../firebase"; 
+// import { loadStripe } from '@stripe/stripe-js'; // Removed Stripe import
 import {
   Box,
   Typography,
@@ -11,6 +12,19 @@ import {
   DialogContent,
   IconButton,
   CircularProgress,
+  TextField,
+  Avatar,
+  Rating,
+  Stack,
+  Divider,
+  Paper,
+  DialogTitle,
+  DialogActions,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
 } from "@mui/material";
 import {
   Close as CloseIcon,
@@ -30,6 +44,13 @@ import {
   Shower as ShowerIcon,
   Fireplace as FireplaceIcon,
 } from "@mui/icons-material";
+import { DateRange } from 'react-date-range';
+import { addDays, isBefore, isAfter, format, startOfDay, endOfDay } from 'date-fns';
+import { lv } from 'date-fns/locale';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+
+// const stripePromise = loadStripe('pk_test_51ObI6xHCqLwHfBqfls20T9gJk1iPhhEwTjPGWsD11bMCbawy3u7ot4nl14ghADC10xxJzr1iq7T7uRI339nG9cU700H9NU3Dic'); // Removed Stripe initialization
 
 const amenitiesIcons = {
   wifi: <WifiIcon />,
@@ -73,6 +94,31 @@ const OfferDetails = () => {
   const [offer, setOffer] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [isReserved, setIsReserved] = useState(false);
+  const [selectedDates, setSelectedDates] = useState([
+    {
+      startDate: new Date(),
+      endDate: addDays(new Date(), 7),
+      key: 'selection',
+    },
+  ]);
+  const [reservations, setReservations] = useState([]);
+  const [totalCost, setTotalCost] = useState(0);
+  const [reviews, setReviews] = useState([
+    {
+      authorAvatar: "https://via.placeholder.com/150",
+      authorName: "Jānis Bērziņš",
+      rating: 4,
+      text: "Lieliska vieta! Ļoti tīra un ērta. Noteikti ieteikšu draugiem.",
+    },
+    {
+      authorAvatar: "https://via.placeholder.com/150",
+      authorName: "Anna Kalniņa",
+      rating: 5,
+      text: "Viss bija perfekti! Ļoti jauka saimniece un brīnišķīga vieta.",
+    },
+  ]);
+  const [reservationData, setReservationData] = useState([]); // State for reservation table data
 
   useEffect(() => {
     const fetchOffer = async () => {
@@ -83,7 +129,29 @@ const OfferDetails = () => {
       }
     };
 
+    const fetchReservations = async () => {
+      const reservationRef = collection(db, "Reservations");
+      const snapshot = await getDocs(reservationRef);
+      const reservationsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setReservations(reservationsData);
+    };
+
+    const fetchReservationData = async () => {
+      const reservationDataRef = collection(db, "ReservationData"); // Assuming you have a collection named "ReservationData"
+      const snapshot = await getDocs(reservationDataRef);
+      const reservationData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setReservationData(reservationData);
+    };
+
     fetchOffer();
+    fetchReservations();
+    fetchReservationData(); // Fetch reservation data when component mounts
   }, [id]);
 
   const toggleDescription = () => {
@@ -93,6 +161,74 @@ const OfferDetails = () => {
   const handleApartamentiClick = () => {
     navigate("/Apartamenti");
   };
+
+  const handleReserveClick = async () => {
+    const uid = auth.currentUser.uid; // Get the UID of the logged-in user
+    const userRef = doc(collection(db, "Users"), uid);
+    const userDoc = await getDoc(userRef);
+
+    const isDateAvailable = !reservations.some(
+      (reservation) =>
+        reservation.houseId === offer.id && // Match house ID
+        (
+          (isBefore(selectedDates[0].startDate, new Date(reservation.endDate)) &&
+            isAfter(selectedDates[0].startDate, new Date(reservation.startDate))) || 
+          (isBefore(selectedDates[0].endDate, new Date(reservation.endDate)) &&
+            isAfter(selectedDates[0].endDate, new Date(reservation.startDate)))
+        )
+    );
+
+    if (userDoc.exists() && userDoc.data().balance >= totalCost && isDateAvailable) {
+      try {
+        // 1. Update user balance
+        await Promise.all([
+          updateDoc(userRef, { balance: userDoc.data().balance - totalCost }),
+          // 2. Create reservation (can be done in parallel)
+          setDoc(doc(collection(db, "Reservations"), offer.id), {
+            userId: uid,
+            houseId: offer.id,
+            startDate: selectedDates[0].startDate,
+            endDate: selectedDates[0].endDate,
+            OwnerId: offer.Owner,
+            
+          }),
+        ]);
+
+        // 4. Confirmation (no Stripe needed)
+        alert("Reservation successful! Your balance has been updated.");
+
+        setIsReserved(true);
+      } catch (error) {
+        console.error("Error updating balance or creating reservation:", error);
+        alert("Error processing reservation. Please try again later.");
+      }
+    } else {
+      alert("Insufficient funds or dates are not available!");
+    }
+  };
+
+  const getDisabledDates = () => {
+    const disabledDates = [];
+    reservations.forEach((reservation) => {
+      const startDate = new Date(reservation.startDate);
+      const endDate = new Date(reservation.endDate);
+      for (let date = startOfDay(startDate); isBefore(date, endDate); date = addDays(date, 1)) {
+        disabledDates.push(date);
+      }
+    });
+    return disabledDates;
+  };
+
+  useEffect(() => {
+    if (offer && selectedDates[0].startDate && selectedDates[0].endDate) {
+      const days = Math.ceil((selectedDates[0].endDate - selectedDates[0].startDate) / (1000 * 3600 * 24));
+      const baseCost = days * offer.Price;
+      const tax = baseCost * 0.12;
+      setTotalCost(baseCost + tax);
+    } else {
+      setTotalCost(0);
+    }
+  }, [selectedDates, offer]);
 
   if (!offer) {
     return (
@@ -134,7 +270,7 @@ const OfferDetails = () => {
         {offer.Name}
       </Typography>
       <Grid container spacing={2} mb={2}>
-        <Grid  item xs={12} md={5}>
+        <Grid item xs={12} md={5}>
           <img
             src={offer.Images[0]}
             alt="Main"
@@ -218,6 +354,28 @@ const OfferDetails = () => {
         Cena
       </Typography>
       <Typography gutterBottom>{offer.Price} € par nakti</Typography>
+
+      <Grid container spacing={2} mb={4} style={{ marginTop: "20px" }}>
+        <Grid item xs={12} md={12}>
+          <DateRange
+            editableDateInputs={true}
+            onChange={(item) => setSelectedDates([item.selection])}
+            moveRangeOnFirstSelection={false}
+            ranges={selectedDates}
+            minDate={new Date()}
+            locale={lv}
+            disabledDates={getDisabledDates()} // Pass disabled dates to DateRange
+          />
+        </Grid>
+      </Grid>
+
+      <Grid item xs={12} md={12} style={{ marginTop: '20px' }}>
+        <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
+          Kopējā cena
+        </Typography>
+        <Typography gutterBottom>{totalCost.toFixed(2)} €</Typography>
+      </Grid>
+
       <Box textAlign="right" mt={4}>
         <Button
           variant="contained"
@@ -227,10 +385,44 @@ const OfferDetails = () => {
         >
           Atpakaļ
         </Button>
-        <Button variant="contained" color="secondary">
-          Rezervēt
-        </Button>
+        {isReserved ? (
+          <Button variant="contained" disabled>
+            Rezervēts
+          </Button>
+        ) : (
+          <Button variant="contained" color="secondary" onClick={handleReserveClick}>
+            Rezervēt
+          </Button>
+        )}
       </Box>
+
+      <Typography variant="h6" gutterBottom style={{ fontWeight: "bold", marginTop: '30px' }}>
+        Atsauksmes
+      </Typography>
+      <Grid container spacing={2} mt={2}>
+        {reviews.map((review, index) => (
+          <Grid item xs={12} key={index}>
+            <Paper elevation={3} sx={{ padding: 2, borderRadius: 2 }}>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item>
+                  <Avatar src={review.authorAvatar} alt={review.authorName} />
+                </Grid>
+                <Grid item xs>
+                  <Typography variant="subtitle1" gutterBottom>
+                    {review.authorName}
+                  </Typography>
+                  <Rating name="read-only" value={review.rating} readOnly />
+                  <Typography variant="body2" gutterBottom>
+                    {review.text}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+
+     
       {selectedImage && (
         <Dialog
           open={!!selectedImage}

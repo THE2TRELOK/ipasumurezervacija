@@ -35,7 +35,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://github.com/THE2TRELOK">
-      EstatoRent
+        EstatoRent
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -68,15 +68,13 @@ export default function Login() {
     });
   };
   const handlePasswordChange = (newPassword) => {
-    setPassword(newPassword); 
+    setPassword(newPassword);
   };
 
   const handleMainClick = () => {
     navigate("/");
   };
 
-
-  
   const handleRegister = async () => {
     try {
       // Create the user
@@ -86,16 +84,16 @@ export default function Login() {
         password
       );
       console.log("User registered successfully:", userCredential.user);
-  
+
       // Save user data in Firestore with UID as document ID
       await setDoc(doc(db, "Users", userCredential.user.uid), {
         Name: namee,
         Surname: surname,
         Email: email,
         Role: "User",
-        Status: "Active"
+        Status: "Active",
       });
-  
+
       setUser(userCredential.user.email);
       message.success("Registration successful");
     } catch (error) {

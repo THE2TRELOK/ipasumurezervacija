@@ -18,6 +18,12 @@ import { Spin, Result, Button } from "antd";
 import { UserProvider, useUser } from "./components/UserContext";
 import Manasrezervacijas from "./components/RezervacijasPievienojums/ManasRezervacijas.jsx";
 import Bookingregister from "./Admin/BookingRegister.jsx";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
+// Ваша публичная Stripe API ключ
+const stripePromise = loadStripe("pk_test_51ObI6xHCqLwHfBqfls20T9gJk1iPhhEwTjPGWsD11bMCbawy3u7ot4nl14ghADC10xxJzr1iq7T7uRI339nG9cU700H9NU3Dic");
+
 function NotFound() {
   const navigateToHome = () => {
     window.location.href = "/";
@@ -88,66 +94,68 @@ function App() {
     <div className="App">
       <UserProvider>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/calendarnbook" element={<Calendarnbook />} />
-            <Route path="/review" element={<Review />} />
-            <Route path="/apartamenti" element={<Apartamenti />} />
-            <Route path="/popular" element={<Popular />} />
-            <Route
-              path="/bookingregister"
-              element={
-                userRole === "Admin"  ? (
-                  <Bookingregister />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-             <Route
-              path="/manasrezervacijas"
-              element={
-                userRole === "User" || userRole === "Admin"? (
-                  <Manasrezervacijas />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
+          <Elements stripe={stripePromise}> {/* Wrap Stripe routes here */}
+            <Routes>
+              <Route path="/" element={<Main />} />
+              <Route path="/calendarnbook" element={<Calendarnbook />} />
+              <Route path="/review" element={<Review />} />
+              <Route path="/apartamenti" element={<Apartamenti />} />
+              <Route path="/popular" element={<Popular />} />
               <Route
-              path="/checkout"
-              element={
-                userRole === "User" || userRole === "Admin"? (
-                  <Checkout />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-            <Route
-              path="/profils"
-              element={
-                userRole === "Admin" || userRole === "User" ? (
-                  <Profils />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/userregistry"
-              element={
-                userRole === "Admin" ? (
-                  <UserRegister />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-            <Route path="/offer/:id" element={<OfferDetails />} /> {/* Новый маршрут */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+                path="/bookingregister"
+                element={
+                  userRole === "Admin" ? (
+                    <Bookingregister />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route
+                path="/manasrezervacijas"
+                element={
+                  userRole === "User" || userRole === "Admin" ? (
+                    <Manasrezervacijas />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route
+                path="/checkout"
+                element={
+                  userRole === "User" || userRole === "Admin" ? (
+                    <Checkout />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route
+                path="/profils"
+                element={
+                  userRole === "Admin" || userRole === "User" ? (
+                    <Profils />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/userregistry"
+                element={
+                  userRole === "Admin" ? (
+                    <UserRegister />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route path="/offer/:id" element={<OfferDetails />} /> {/* Новый маршрут */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Elements>
         </BrowserRouter>
       </UserProvider>
     </div>

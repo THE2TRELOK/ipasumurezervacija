@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Typography, Grid, Box } from "@mui/material";
-
+import MapSelector from "./MapSelector";
 const Bildes = ({ onImagesChange }) => {
   const [images, setImages] = useState([]);
   const [error, setError] = useState(null);
@@ -70,6 +70,7 @@ const Bildes = ({ onImagesChange }) => {
               >
                 X
               </Button>
+             
             </Box>
           </Grid>
         ))}

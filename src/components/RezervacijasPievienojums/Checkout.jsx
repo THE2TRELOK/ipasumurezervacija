@@ -24,7 +24,8 @@ import { db } from "../../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
-const steps = ["Adreses dati", "Ērtibas", "Apraksts", "Bildes"];
+import Lokacija from "./Lokacija";
+const steps = ["Adreses dati", "Ērtibas", "Apraksts", "Bildes",];
 
 function getStepContent(
   step,
