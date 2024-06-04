@@ -8,24 +8,22 @@ import {
   Stepper,
   Step,
   StepLabel,
-  Card,
   Typography,
-  Stack,
 } from "@mui/material";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import AddressForm from "./AddressForm";
 import Ertibas from "./Ertibas";
 import Apraksts from "./Apraksts";
 import Bildes from "./Bildes";
-import { collection, addDoc } from "firebase/firestore";
+import Lokacija from "./Lokacija";
+import { collection, addDoc, GeoPoint } from "firebase/firestore";
 import { db } from "../../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
-import Lokacija from "./Lokacija";
-const steps = ["Adreses dati", "Ērtibas", "Apraksts", "Bildes",];
+import StepIcon from "@mui/material/StepIcon";
+const steps = ["Adreses dati", "Ērtibas", "Apraksts", "Bildes", "Lokacija"];
 
 function getStepContent(
   step,
@@ -35,7 +33,8 @@ function getStepContent(
   aprakstsData,
   handleAmenitiesChange,
   selectedAmenities,
-  handleImagesChange
+  handleImagesChange,
+  handleLocationChange
 ) {
   switch (step) {
     case 0:
@@ -58,6 +57,8 @@ function getStepContent(
       );
     case 3:
       return <Bildes onImagesChange={handleImagesChange} />;
+    case 4:
+      return <Lokacija handleLocationChange={handleLocationChange} />;
     default:
       return (
         <Result
@@ -107,6 +108,7 @@ export default function Checkout() {
   });
   const [imageFiles, setImageFiles] = useState([]);
   const [imageUrls, setImageUrls] = useState([]);
+  const [locationData, setLocationData] = useState(null);
 
   const addresFetch = async () => {
     const auth = getAuth();
@@ -116,6 +118,7 @@ export default function Checkout() {
       console.error("User is not authenticated");
       return;
     }
+
     try {
       const uploadedImageUrls = await uploadImages(imageFiles);
       const houseData = {
@@ -130,6 +133,7 @@ export default function Checkout() {
         PeopleCount: aprakstsData.Nummurs,
         Amenities: selectedAmenities,
         Images: uploadedImageUrls,
+        Location: locationData, 
         createdAt: new Date(),
         updatedAt: new Date(),
         Owner: uid,
@@ -168,6 +172,12 @@ export default function Checkout() {
     setImageFiles(files);
   };
 
+  const handleLocationChange = (location) => {
+    const { lat, lng } = location;
+    const geoPoint = new GeoPoint(lat, lng);
+    setLocationData(geoPoint);
+  };
+
   const validateStep = (step) => {
     switch (step) {
       case 0:
@@ -178,6 +188,8 @@ export default function Checkout() {
         return validateApraksts();
       case 3:
         return validateImages();
+      case 4:
+        return validateLocation();
       default:
         return true;
     }
@@ -201,12 +213,16 @@ export default function Checkout() {
     return imageFiles.length >= 3;
   };
 
+  const validateLocation = () => {
+    return locationData !== null;
+  };
+
   const handleNext = () => {
     if (validateStep(activeStep)) {
       if (activeStep === steps.length - 1) {
         addresFetch();
       } else {
-        setActiveStep(activeStep + 1);
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
       }
     } else {
       warning();
@@ -214,14 +230,25 @@ export default function Checkout() {
   };
 
   const handleBack = () => {
-    setActiveStep(activeStep - 1);
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   return (
     <>
-      {contextHolder}
       <CssBaseline />
-      <Grid container sx={{ height: { xs: "100%", sm: "100dvh" } }}>
+      {contextHolder}
+      <Grid
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundImage: `url("https://images.pexels.com/photos/731082/pexels-photo-731082.jpeg?cs=srgb&dl=pexels-sebastians-731082.jpg&fm=jpg")`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+        }}
+        container
+        sx={{ height: { xs: "100%", sm: "100dvh" } }}
+      >
         <Grid
           item
           xs={12}
@@ -233,145 +260,55 @@ export default function Checkout() {
             backgroundColor: "background.paper",
             borderRight: { sm: "none", md: "1px solid" },
             borderColor: { sm: "none", md: "divider" },
-
+            backgroundColor: "#bec0b2",
             alignItems: "start",
             pt: 4,
             px: 10,
             gap: 4,
+            borderRadius: "20px",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
           }}
         >
           <Box
-            sx={{
-              display: "flex",
-              alignItems: "end",
-              height: 150,
-            }}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            style={{ marginBottom: "2rem" }}
           >
-            <Button
-              startIcon={<ArrowBackRoundedIcon />}
-              component="a"
-              href="/profils"
-              sx={{ ml: "-8px" }}
+            <Typography component="h1" variant="h4" align="center">
+              Solis {activeStep + 1} / {steps.length}
+            </Typography>
+            <Stepper
+              activeStep={activeStep}
+              style={{ width: "100%", backgroundColor: "#bec0b2" }}
             >
-              Atgriezties
-            </Button>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              flexGrow: 1,
-              width: "100%",
-              maxWidth: 500,
-            }}
-          ></Box>
-        </Grid>
-        <Grid
-          item
-          sm={12}
-          md={7}
-          lg={8}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            maxWidth: "100%",
-            width: "100%",
-            backgroundColor: { xs: "transparent", sm: "background.default" },
-            alignItems: "start",
-            pt: { xs: 2, sm: 4 },
-            px: { xs: 2, sm: 10 },
-            gap: { xs: 4, md: 8 },
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: { sm: "space-between", md: "flex-end" },
-              alignItems: "center",
-              width: "100%",
-              maxWidth: { sm: "100%", md: 600 },
-            }}
-          >
-            <Box
-              sx={{
-                display: { xs: "flex", md: "none" },
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "space-between",
-              }}
-            ></Box>
-            <Box
-              sx={{
-                display: { xs: "none", md: "flex" },
-                flexDirection: "column",
-                justifyContent: "space-between",
-                alignItems: "flex-end",
-                flexGrow: 1,
-                height: 150,
-              }}
-            >
-              <Stepper
-                id="desktop-stepper"
-                activeStep={activeStep}
-                sx={{
-                  width: "100%",
-                  height: 40,
-                }}
-              >
-                {steps.map((label) => (
-                  <Step
-                    sx={{
-                      ":first-child": { pl: 0 },
-                      ":last-child": { pr: 0 },
+              {steps.map((label, index) => (
+                <Step key={label}>
+                  <StepIcon
+                    style={{
+                      backgroundColor: "#151f28", // Circle color
+                      color: "#fff",
                     }}
-                    key={label}
                   >
-                    <StepLabel>{label}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-            </Box>
-          </Box>
-          <Card
-            sx={{
-              display: { xs: "flex", md: "none" },
-              width: "100%",
-            }}
-          ></Card>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              flexGrow: 1,
-              width: "100%",
-              maxWidth: { sm: "100%", md: 600 },
-              maxHeight: "720px",
-              gap: { xs: 5, md: "none" },
-            }}
-          >
+                    {index + 1}
+                  </StepIcon>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+
             {activeStep === steps.length ? (
-              <Stack spacing={2} useFlexGap>
-                <Typography variant="h1">🏠</Typography>
-                <Typography variant="h5">Paldies!</Typography>
-                <Typography variant="body" color="text.secondary">
-                  Paldies, ka izmantojat mūsu pakalpojumus, jūsu piedāvājums ir
-                  nosūtīts administratoram parbaudes nolukiem, un drīz to varēs
-                  redzēt arī citi lietotāji.
-                </Typography>
-                <Button
-                  variant="contained"
-                  sx={{
-                    alignSelf: "start",
-                    width: { xs: "100%", sm: "auto" },
-                  }}
-                  component="a"
-                  href="/profils"
-                >
-                  Atgriezties profilā
-                </Button>
-              </Stack>
+              <Result
+                status="success"
+                title="Your registration is complete!"
+                extra={
+                  <Button type="primary" onClick={() => setActiveStep(0)}>
+                    Back to Start
+                  </Button>
+                }
+              />
             ) : (
-              <React.Fragment>
+              <Box style={{ marginTop: "2rem", width: "100%" }}>
                 {getStepContent(
                   activeStep,
                   handleFormChange,
@@ -380,74 +317,40 @@ export default function Checkout() {
                   aprakstsData,
                   handleAmenitiesChange,
                   selectedAmenities,
-                  handleImagesChange
+                  handleImagesChange,
+                  handleLocationChange
                 )}
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: { xs: "column-reverse", sm: "row" },
-                    justifyContent:
-                      activeStep !== 0 ? "space-between" : "flex-end",
-                    alignItems: "end",
-                    flexGrow: 1,
-                    gap: 1,
-                    pb: { xs: 12, sm: 0 },
-                    mt: { xs: 2, sm: 0 },
-                    mb: "60px",
-                  }}
-                >
-                  {activeStep !== 0 && (
-                    <Button
-                      startIcon={<ChevronLeftRoundedIcon />}
-                      onClick={handleBack}
-                      variant="text"
-                      sx={{
-                        display: { xs: "none", sm: "flex" },
-                      }}
-                    >
-                      Atgriezties
-                    </Button>
-                  )}
-
-                  {activeStep !== 0 && (
-                    <Button
-                      startIcon={<ChevronLeftRoundedIcon />}
-                      onClick={handleBack}
-                      variant="outlined"
-                      fullWidth
-                      sx={{
-                        display: { xs: "flex", sm: "none" },
-                      }}
-                    >
-                      Atpakaļ
-                    </Button>
-                  )}
-                  {activeStep === steps.length - 1 ? (
-                    <Button
-                      variant="contained"
-                      endIcon={<ChevronRightRoundedIcon />}
-                      onClick={addresFetch}
-                      sx={{
-                        width: { xs: "100%", sm: "fit-content" },
-                      }}
-                    >
-                      Apstiprināt
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      endIcon={<ChevronRightRoundedIcon />}
-                      onClick={handleNext}
-                      sx={{
-                        width: { xs: "100%", sm: "fit-content" },
-                      }}
-                    >
-                      Talāk
-                    </Button>
-                  )}
-                </Box>
-              </React.Fragment>
+              </Box>
             )}
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              style={{ marginTop: "2rem", width: "100%" }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleBack}
+                disabled={activeStep === 0}
+                startIcon={<ArrowBackRoundedIcon />}
+              >
+                Atpakaļ
+              </Button>
+              <Button
+                variant="contained"
+                style={{ backgroundColor: "#151f28" }}
+                onClick={handleNext}
+                endIcon={
+                  activeStep === steps.length - 1 ? (
+                    <ChevronRightRoundedIcon />
+                  ) : (
+                    <ChevronRightRoundedIcon />
+                  )
+                }
+              >
+                {activeStep === steps.length - 1 ? "Apstiprināt" : "Turpināt"}
+              </Button>
+            </Box>
           </Box>
         </Grid>
       </Grid>

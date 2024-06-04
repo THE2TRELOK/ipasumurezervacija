@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { collection, doc, getDoc, setDoc, updateDoc, getDocs } from "firebase/firestore";
-import { db, auth } from "../../firebase"; 
-// import { loadStripe } from '@stripe/stripe-js'; // Removed Stripe import
+import {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  getDocs,
+} from "firebase/firestore";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import { Room } from "@mui/icons-material";
+import PlaceIcon from "@mui/icons-material/Place";
+import L from "leaflet";
+import { db, auth } from "../../firebase";
 import {
   Box,
   Typography,
@@ -44,13 +55,18 @@ import {
   Shower as ShowerIcon,
   Fireplace as FireplaceIcon,
 } from "@mui/icons-material";
-import { DateRange } from 'react-date-range';
-import { addDays, isBefore, isAfter, format, startOfDay, endOfDay } from 'date-fns';
-import { lv } from 'date-fns/locale';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
-
-// const stripePromise = loadStripe('pk_test_51ObI6xHCqLwHfBqfls20T9gJk1iPhhEwTjPGWsD11bMCbawy3u7ot4nl14ghADC10xxJzr1iq7T7uRI339nG9cU700H9NU3Dic'); // Removed Stripe initialization
+import { DateRange } from "react-date-range";
+import {
+  addDays,
+  isBefore,
+  isAfter,
+  format,
+  startOfDay,
+  endOfDay,
+} from "date-fns";
+import { lv } from "date-fns/locale";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const amenitiesIcons = {
   wifi: <WifiIcon />,
@@ -99,7 +115,7 @@ const OfferDetails = () => {
     {
       startDate: new Date(),
       endDate: addDays(new Date(), 7),
-      key: 'selection',
+      key: "selection",
     },
   ]);
   const [reservations, setReservations] = useState([]);
@@ -119,7 +135,11 @@ const OfferDetails = () => {
     },
   ]);
   const [reservationData, setReservationData] = useState([]); // State for reservation table data
-
+  const customIcon = L.icon({
+    iconUrl: "https://img.icons8.com/color/48/000000/marker.png", // icon URL
+    iconSize: [38, 38],
+    iconAnchor: [19, 38],
+  });
   useEffect(() => {
     const fetchOffer = async () => {
       const offerRef = doc(collection(db, "Houses"), id);
@@ -128,7 +148,6 @@ const OfferDetails = () => {
         setOffer({ id: offerDoc.id, ...offerDoc.data() });
       }
     };
-
     const fetchReservations = async () => {
       const reservationRef = collection(db, "Reservations");
       const snapshot = await getDocs(reservationRef);
@@ -140,7 +159,7 @@ const OfferDetails = () => {
     };
 
     const fetchReservationData = async () => {
-      const reservationDataRef = collection(db, "ReservationData"); // Assuming you have a collection named "ReservationData"
+      const reservationDataRef = collection(db, "ReservationData");
       const snapshot = await getDocs(reservationDataRef);
       const reservationData = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -151,7 +170,7 @@ const OfferDetails = () => {
 
     fetchOffer();
     fetchReservations();
-    fetchReservationData(); // Fetch reservation data when component mounts
+    fetchReservationData();
   }, [id]);
 
   const toggleDescription = () => {
@@ -170,15 +189,20 @@ const OfferDetails = () => {
     const isDateAvailable = !reservations.some(
       (reservation) =>
         reservation.houseId === offer.id && // Match house ID
-        (
-          (isBefore(selectedDates[0].startDate, new Date(reservation.endDate)) &&
-            isAfter(selectedDates[0].startDate, new Date(reservation.startDate))) || 
+        ((isBefore(selectedDates[0].startDate, new Date(reservation.endDate)) &&
+          isAfter(
+            selectedDates[0].startDate,
+            new Date(reservation.startDate)
+          )) ||
           (isBefore(selectedDates[0].endDate, new Date(reservation.endDate)) &&
-            isAfter(selectedDates[0].endDate, new Date(reservation.startDate)))
-        )
+            isAfter(selectedDates[0].endDate, new Date(reservation.startDate))))
     );
 
-    if (userDoc.exists() && userDoc.data().balance >= totalCost && isDateAvailable) {
+    if (
+      userDoc.exists() &&
+      userDoc.data().balance >= totalCost &&
+      isDateAvailable
+    ) {
       try {
         // 1. Update user balance
         await Promise.all([
@@ -190,11 +214,10 @@ const OfferDetails = () => {
             startDate: selectedDates[0].startDate,
             endDate: selectedDates[0].endDate,
             OwnerId: offer.Owner,
-            
           }),
         ]);
 
-        // 4. Confirmation (no Stripe needed)
+        // 4. Confirmation
         alert("Reservation successful! Your balance has been updated.");
 
         setIsReserved(true);
@@ -212,7 +235,11 @@ const OfferDetails = () => {
     reservations.forEach((reservation) => {
       const startDate = new Date(reservation.startDate);
       const endDate = new Date(reservation.endDate);
-      for (let date = startOfDay(startDate); isBefore(date, endDate); date = addDays(date, 1)) {
+      for (
+        let date = startOfDay(startDate);
+        isBefore(date, endDate);
+        date = addDays(date, 1)
+      ) {
         disabledDates.push(date);
       }
     });
@@ -221,7 +248,10 @@ const OfferDetails = () => {
 
   useEffect(() => {
     if (offer && selectedDates[0].startDate && selectedDates[0].endDate) {
-      const days = Math.ceil((selectedDates[0].endDate - selectedDates[0].startDate) / (1000 * 3600 * 24));
+      const days = Math.ceil(
+        (selectedDates[0].endDate - selectedDates[0].startDate) /
+          (1000 * 3600 * 24)
+      );
       const baseCost = days * offer.Price;
       const tax = baseCost * 0.12;
       setTotalCost(baseCost + tax);
@@ -369,7 +399,7 @@ const OfferDetails = () => {
         </Grid>
       </Grid>
 
-      <Grid item xs={12} md={12} style={{ marginTop: '20px' }}>
+      <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
         <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
           Kopējā cena
         </Typography>
@@ -390,13 +420,40 @@ const OfferDetails = () => {
             Rezervēts
           </Button>
         ) : (
-          <Button variant="contained" color="secondary" onClick={handleReserveClick}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleReserveClick}
+          >
             Rezervēt
           </Button>
         )}
       </Box>
 
-      <Typography variant="h6" gutterBottom style={{ fontWeight: "bold", marginTop: '30px' }}>
+      <div style={{ height: "400px", marginTop: "30px" }}>
+        <MapContainer
+          center={[offer.Location.latitude, offer.Location.longitude]}
+          zoom={13}
+          style={{ height: "100%" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <Marker
+            icon={customIcon}
+            position={[offer.Location.latitude, offer.Location.longitude]}
+          >
+            <Popup>{offer.Name}</Popup>
+          </Marker>
+        </MapContainer>
+      </div>
+
+      <Typography
+        variant="h6"
+        gutterBottom
+        style={{ fontWeight: "bold", marginTop: "30px" }}
+      >
         Atsauksmes
       </Typography>
       <Grid container spacing={2} mt={2}>
@@ -422,7 +479,6 @@ const OfferDetails = () => {
         ))}
       </Grid>
 
-     
       {selectedImage && (
         <Dialog
           open={!!selectedImage}

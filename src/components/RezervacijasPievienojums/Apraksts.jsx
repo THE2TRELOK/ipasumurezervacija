@@ -16,7 +16,7 @@ export default function Apraksts({ handleAprakstsChange, aprakstsData }) {
     setDescription(e.target.value);
     handleAprakstsChange("Apraksts1", e.target.value);
   };
-
+  
   const handleNummursChange = (e) => {
     setPeople(e.target.value);
     handleAprakstsChange("Nummurs", e.target.value);
