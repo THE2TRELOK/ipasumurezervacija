@@ -18,6 +18,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import ShowerIcon from '@mui/icons-material/Shower';
 import FireplaceIcon from '@mui/icons-material/Fireplace';
+import SpeakerIcon from '@mui/icons-material/Speaker';
 import { useState } from 'react';
 
 const amenitiesList = [
@@ -25,8 +26,8 @@ const amenitiesList = [
   { value: 'Televizors', label: 'Televizors', icon: <TvIcon /> },
   { value: 'Gulta', label: 'Gulta', icon: <BedIcon /> },
   { value: 'Portatīvais_dators', label: 'Portatīvais dators', icon: <LaptopIcon /> },
-  { value: 'kondicionieris', label: 'kondicionieris', icon: <AcUnitIcon /> },
-  { value: 'Autostāvvieta', label: 'Autostāvvieta', icon: <LocalParkingIcon /> },
+  { value: 'kondicionieris', label: 'kondicionier', icon: <AcUnitIcon /> },
+  { value: 'Autostāvvieta', label: 'Stāvvieta', icon: <LocalParkingIcon /> },
   { value: 'Baseins', label: 'Baseins', icon: <PoolIcon /> },
   { value: 'Virtuve', label: 'Virtuve', icon: <KitchenIcon /> },
   { value: 'Kamera', label: 'Kamera', icon: <VideocamIcon /> },
@@ -36,6 +37,7 @@ const amenitiesList = [
   { value: 'sauna', label: 'Pirts', icon: <BathtubIcon /> },
   { value: 'Duša', label: 'Duša', icon: <ShowerIcon /> },
   { value: 'kamins', label: 'Kamins', icon: <FireplaceIcon /> },
+  { value: 'Muzika', label: 'Muzika', icon: <SpeakerIcon /> },
 ];
 
 export default function Ertibas({ onAmenitiesChange }) {
@@ -49,14 +51,14 @@ export default function Ertibas({ onAmenitiesChange }) {
   return (
     <Grid container spacing={1}>
       {amenitiesList.map((amenity) => (
-        <Grid item xs={4} key={amenity.value}>
+        <Grid item xs={3} key={amenity.value}>
           <ToggleButtonGroup
             value={selectedAmenities}
             onChange={handleAmenitiesChange}
             aria-label="amenities"
             sx={{ justifyContent: 'center' }}
           >
-            <ToggleButton value={amenity.value} aria-label={amenity.label} sx={{ width: '160px',height:'105px', flexDirection: 'column', margin:"0" }}>
+            <ToggleButton value={amenity.value} aria-label={amenity.label} sx={{ width: '160px',height:'105px', flexDirection: 'column', margin:"0",padding:5 }}>
               <Box marginTop={1}>
                 {amenity.icon}
               </Box>

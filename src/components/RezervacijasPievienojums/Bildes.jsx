@@ -36,12 +36,12 @@ const Bildes = ({ onImagesChange }) => {
         onChange={handleImageUpload}
       />
       <label htmlFor="image-upload">
-        <Button variant="contained" component="span">
+        <Button variant="contained" component="span"     style={{ backgroundColor: "#151f28" }}>
           Augšpieladet attelus
         </Button>
       </label>
       {error && <Typography color="error">{error}</Typography>}
-      <Grid container spacing={2}>
+      <Grid container spacing={0} xs={12}>
         {images.map((image, index) => (
           <Grid item key={index}>
             <Box

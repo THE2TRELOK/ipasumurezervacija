@@ -22,13 +22,9 @@ export default function Apraksts({ handleAprakstsChange, aprakstsData }) {
     handleAprakstsChange("Nummurs", e.target.value);
   };
 
-  const handleLocationSelect = (latlng) => {
-    setLocation(latlng);
-    handleAprakstsChange("Location", latlng);
-  };
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={5}>
       <Typography variant="h6">Īsi aprakstiet savu māju</Typography>
       <TextField
         id="outlined-multiline-flexible"

@@ -252,15 +252,15 @@ export default function Checkout() {
         <Grid
           item
           xs={12}
-          sm={5}
-          lg={4}
+          sm={6}
+          lg={6}
           sx={{
             display: { xs: "none", md: "flex" },
             flexDirection: "column",
             backgroundColor: "background.paper",
             borderRight: { sm: "none", md: "1px solid" },
             borderColor: { sm: "none", md: "divider" },
-            backgroundColor: "#bec0b2",
+            backgroundColor: "#fff",
             alignItems: "start",
             pt: 4,
             px: 10,
@@ -280,7 +280,7 @@ export default function Checkout() {
             </Typography>
             <Stepper
               activeStep={activeStep}
-              style={{ width: "100%", backgroundColor: "#bec0b2" }}
+              style={{ width: "100%"}}
             >
               {steps.map((label, index) => (
                 <Step key={label}>
@@ -329,7 +329,7 @@ export default function Checkout() {
             >
               <Button
                 variant="contained"
-                color="primary"
+                style={{ backgroundColor: "#151f28" }}
                 onClick={handleBack}
                 disabled={activeStep === 0}
                 startIcon={<ArrowBackRoundedIcon />}

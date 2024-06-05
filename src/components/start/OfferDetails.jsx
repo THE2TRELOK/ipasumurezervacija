@@ -10,8 +10,6 @@ import {
 } from "firebase/firestore";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { Room } from "@mui/icons-material";
-import PlaceIcon from "@mui/icons-material/Place";
 import L from "leaflet";
 import { db, auth } from "../../firebase";
 import {
@@ -55,6 +53,7 @@ import {
   Shower as ShowerIcon,
   Fireplace as FireplaceIcon,
 } from "@mui/icons-material";
+import SpeakerIcon from '@mui/icons-material/Speaker';
 import { DateRange } from "react-date-range";
 import {
   addDays,
@@ -84,6 +83,7 @@ const amenitiesIcons = {
   sauna: <BathtubIcon />,
   duša: <ShowerIcon />,
   kamins: <FireplaceIcon />,
+  Muzika:<SpeakerIcon />
 };
 
 const amenitiesText = {
@@ -102,6 +102,7 @@ const amenitiesText = {
   sauna: "Pirts",
   duša: "Duša",
   kamins: "Kamīns",
+  Muzika: "Mūzika"
 };
 
 const OfferDetails = () => {
