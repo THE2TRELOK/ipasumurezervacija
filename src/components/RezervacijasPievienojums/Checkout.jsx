@@ -9,6 +9,9 @@ import {
   Step,
   StepLabel,
   Typography,
+  Stack,
+  IconButton,
+  Link,
 } from "@mui/material";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
@@ -133,7 +136,7 @@ export default function Checkout() {
         PeopleCount: aprakstsData.Nummurs,
         Amenities: selectedAmenities,
         Images: uploadedImageUrls,
-        Location: locationData, 
+        Location: locationData,
         createdAt: new Date(),
         updatedAt: new Date(),
         Owner: uid,
@@ -269,19 +272,22 @@ export default function Checkout() {
             boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
           }}
         >
+          <Link
+            href="/profils"
+            style={{ alignSelf: "start", marginBottom: "16px" }}
+          >
+            <IconButton>
+              <ArrowBackRoundedIcon />
+              Atgriezties profila
+            </IconButton>
+          </Link>
           <Box
             display="flex"
             flexDirection="column"
             alignItems="center"
             style={{ marginBottom: "2rem" }}
           >
-            <Typography component="h1" variant="h4" align="center">
-              Solis {activeStep + 1} / {steps.length}
-            </Typography>
-            <Stepper
-              activeStep={activeStep}
-              style={{ width: "100%"}}
-            >
+            <Stepper activeStep={activeStep} style={{ width: "100%" }}>
               {steps.map((label, index) => (
                 <Step key={label}>
                   <StepIcon
@@ -298,15 +304,28 @@ export default function Checkout() {
             </Stepper>
 
             {activeStep === steps.length ? (
-              <Result
-                status="success"
-                title="Your registration is complete!"
-                extra={
-                  <Button type="primary" onClick={() => setActiveStep(0)}>
-                    Back to Start
-                  </Button>
-                }
-              />
+              <Stack spacing={2} useFlexGap>
+                <Typography variant="h1">🏠</Typography>
+                <Typography variant="h5">Paldies!</Typography>
+                <Typography variant="body" color="text.secondary">
+                  Paldies, ka izmantojat mūsu pakalpojumus, jūsu piedāvājums ir
+                  nosūtīts administratoram parbaudes nolukiem, un drīz to varēs
+                  redzēt arī citi lietotāji.
+                </Typography>
+                <Button
+                  variant="contained"
+                  sx={{
+                    width: "100%",
+                    height: 40,
+                    alignSelf: "start",
+                    width: { xs: "100%", sm: "auto" },
+                  }}
+                  component="a"
+                  href="/profils"
+                >
+                  Atgriezties profilā
+                </Button>
+              </Stack>
             ) : (
               <Box style={{ marginTop: "2rem", width: "100%" }}>
                 {getStepContent(
@@ -329,7 +348,7 @@ export default function Checkout() {
             >
               <Button
                 variant="contained"
-                style={{ backgroundColor: "#151f28" }}
+                style={{ backgroundColor: "#151f28", color:"#fff" }}
                 onClick={handleBack}
                 disabled={activeStep === 0}
                 startIcon={<ArrowBackRoundedIcon />}
