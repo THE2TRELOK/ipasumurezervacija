@@ -37,7 +37,7 @@ const Bildes = ({ onImagesChange }) => {
       >
         <Typography variant="h6">Pievienot fotoattelus (minimum 3)</Typography>
         <input
-          accept="image/*"
+          accept="image/"
           style={{ display: "none" }}
           id="image-upload"
           multiple

@@ -272,12 +272,6 @@ const UserRegister = () => {
                 >
                   Pievienot adminu
                 </Button>
-                <Button
-                  icon={<UserAddOutlined />}
-                  onClick={() => setIsPassengerModalOpen(true)}
-                >
-                  Pievienot lietotaju
-                </Button>
               </Button.Group>
 
               <div className="ag-theme-material" style={{ height: "80vh" }}>
@@ -294,7 +288,7 @@ const UserRegister = () => {
 
       <RegistrationModal
         props={"PIEVIENOT Adminu"}
-        title="Jauns menedžera konts"
+        title="Jauns administratora konts"
         visible={isManagerModalOpen}
         onOk={(values) => handleOk(values, "Admin")}
         onCancel={handleCancel}

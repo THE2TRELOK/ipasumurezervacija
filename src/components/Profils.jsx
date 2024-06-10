@@ -22,6 +22,7 @@ import {
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { LikeOutlined } from "@ant-design/icons";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CheckoutForm from './CheckoutForm'; // Импортируем CheckoutForm
 
 const { Content } = Layout;
 
@@ -45,6 +46,7 @@ const Profils = () => {
   const [editedName, setEditedName] = useState("");
   const [editedSurname, setEditedSurname] = useState("");
   const [editedImage, setEditedImage] = useState(null);
+  const [paymentAmount, setPaymentAmount] = useState(""); // State для суммы платежа
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -112,7 +114,7 @@ const Profils = () => {
         <Layout className="site-layout">
           <Content style={{ margin: "16px 16px" }}>
             <Grid container spacing={4}>
-              <Grid item xs={8} md={3}>
+              <Grid item xs={12} md={3}>
                 <Paper
                   elevation={8}
                   sx={{
@@ -121,6 +123,7 @@ const Profils = () => {
                     padding: "1rem",
                     textAlign: "center",
                     borderRadius: "1rem",
+                    backgroundColor: "#f0f2f5",
                   }}
                 >
                   {userData && (
@@ -143,12 +146,33 @@ const Profils = () => {
                           ? userData.createdAt.toDate().toLocaleDateString()
                           : "Unknown"}
                       </Typography>
+                      <Divider sx={{ marginY: "1rem" }} />
+                      <Typography variant="h6" gutterBottom>
+                        Jūsu konta:
+                      </Typography>
+                      <Typography variant="h4" color="primary" gutterBottom>
+                        {userData.balance} EUR
+                      </Typography>
+                      <Box sx={{ marginTop: "2rem" }}>
+                        <Typography variant="h6" gutterBottom>
+                          Veikt maksājumu
+                        </Typography>
+                        <CheckoutForm amount={paymentAmount} setAmount={setPaymentAmount} />
+                      </Box>
                     </Box>
                   )}
                 </Paper>
               </Grid>
               <Grid item xs={12} md={8}>
-                <Container>
+                <Paper
+                  elevation={8}
+                  sx={{
+                    padding: "1rem",
+                    textAlign: "left",
+                    borderRadius: "1rem",
+                    backgroundColor: "#fff",
+                  }}
+                >
                   {userData && (
                     <Box>
                       <Typography variant="h6" gutterBottom>
@@ -163,71 +187,68 @@ const Profils = () => {
                       <Typography variant="body1" sx={{ marginTop: "0.5rem" }}>
                         Epasts: {userData.Email}
                       </Typography>
+                      <Divider sx={{ marginY: "1.5rem" }} />
                       <Button
                         variant="contained"
-                        sx={{ marginTop: "2rem" }}
+                        color="primary"
                         onClick={() => setEditModalVisible(true)}
                       >
-                        Rediģet
+                        Rediget
                       </Button>
                     </Box>
                   )}
-                </Container>
+                </Paper>
               </Grid>
             </Grid>
           </Content>
         </Layout>
       </Layout>
-      <Dialog
-        open={editModalVisible}
-        onClose={() => setEditModalVisible(false)}
-      >
-        <DialogTitle>Rediģet datus</DialogTitle>
+
+      <Dialog open={editModalVisible} onClose={() => setEditModalVisible(false)}>
+        <DialogTitle>Rediget profilu</DialogTitle>
         <DialogContent>
           <TextField
-            fullWidth
-            margin="normal"
+            autoFocus
+            margin="dense"
             label="Vards"
+            type="text"
+            fullWidth
             value={editedName}
             onChange={(e) => setEditedName(e.target.value)}
           />
           <TextField
-            fullWidth
-            margin="normal"
+            margin="dense"
             label="Uzvards"
+            type="text"
+            fullWidth
             value={editedSurname}
             onChange={(e) => setEditedSurname(e.target.value)}
           />
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              marginTop: "1rem",
+          <Upload
+            beforeUpload={(file) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                setEditedImage(e.target.result);
+              };
+              reader.readAsDataURL(file);
+              return false; // Prevent upload
             }}
+            showUploadList={false}
           >
-            <Upload
-              name="avatar"
-              action=""
-              showUploadList={false}
-              beforeUpload={(file) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                  setEditedImage(reader.result);
-                };
-                return false;
-              }}
-            >
-              <Button variant="contained" startIcon={<UploadFileIcon />}>
-                Augšpieladet attelu
-              </Button>
-            </Upload>
-          </Box>
+            <Button variant="outlined" component="span" startIcon={<UploadFileIcon />}>
+              Augšuplādēt jaunu attēlu
+            </Button>
+          </Upload>
+          {editedImage && (
+            <MuiAvatar alt="Preview" src={editedImage} sx={{ width: 80, height: 80, marginTop: '1rem' }} />
+          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditModalVisible(false)}>Cancel</Button>
-          <Button onClick={updateUserData} variant="contained">
-            Save
+          <Button onClick={() => setEditModalVisible(false)} color="primary">
+            Atcelt
+          </Button>
+          <Button onClick={updateUserData} color="primary">
+            Saglabat
           </Button>
         </DialogActions>
       </Dialog>

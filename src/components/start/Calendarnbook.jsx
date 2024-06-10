@@ -20,9 +20,6 @@ const Calendarnbook = () => {
           <br />
           ērtībām un izcilu pieejamu cenām
         </p>
-        <a href="#" className="btn btn-fill btn-large">
-          Rezervēt
-        </a>
       </div>
       <div className="book-right">
         <form action="" className="book-form">

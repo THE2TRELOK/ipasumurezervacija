@@ -69,9 +69,7 @@ const Navbar = () => {
         </Title>
       </Link>
       <Menu mode="vertical" defaultSelectedKeys={[location.pathname]}>
-        <Menu.Item key="/calendar" icon={<CalendarOutlined />}>
-          <Link to="/calendar">Kalendārs</Link>
-        </Menu.Item>
+      
         {userRole === "Admin" && (
           <>
             <Divider className="antd-divider" />
@@ -96,7 +94,7 @@ const Navbar = () => {
         </Menu.Item>
         <Divider className="antd-divider" />
         <Menu.Item key="/settings" icon={<SettingOutlined />}>
-          <Link to="/settings">Iestatījumi</Link>
+          <Link to="/settings">Rezervācijas</Link>
         </Menu.Item>
         {userRole === "Admin" && (
           <>

@@ -7,6 +7,7 @@ import {
   setDoc,
   updateDoc,
   getDocs,
+  arrayUnion,
 } from "firebase/firestore";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -15,7 +16,6 @@ import { db, auth } from "../../firebase";
 import {
   Box,
   Typography,
-  Button,
   Grid,
   Dialog,
   DialogContent,
@@ -53,7 +53,7 @@ import {
   Shower as ShowerIcon,
   Fireplace as FireplaceIcon,
 } from "@mui/icons-material";
-import SpeakerIcon from '@mui/icons-material/Speaker';
+import SpeakerIcon from "@mui/icons-material/Speaker";
 import { DateRange } from "react-date-range";
 import {
   addDays,
@@ -66,6 +66,9 @@ import {
 import { lv } from "date-fns/locale";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { Menu, Dropdown, Button,message } from "antd";
+import Chat from "../Chat/Chat";
+
 
 const amenitiesIcons = {
   wifi: <WifiIcon />,
@@ -83,7 +86,7 @@ const amenitiesIcons = {
   sauna: <BathtubIcon />,
   duša: <ShowerIcon />,
   kamins: <FireplaceIcon />,
-  Muzika:<SpeakerIcon />
+  Muzika: <SpeakerIcon />,
 };
 
 const amenitiesText = {
@@ -102,7 +105,7 @@ const amenitiesText = {
   sauna: "Pirts",
   duša: "Duša",
   kamins: "Kamīns",
-  Muzika: "Mūzika"
+  Muzika: "Mūzika",
 };
 
 const OfferDetails = () => {
@@ -135,18 +138,24 @@ const OfferDetails = () => {
       text: "Viss bija perfekti! Ļoti jauka saimniece un brīnišķīga vieta.",
     },
   ]);
-  const [reservationData, setReservationData] = useState([]); // State for reservation table data
+  const [reservationData, setReservationData] = useState([]);
   const customIcon = L.icon({
-    iconUrl: "https://img.icons8.com/color/48/000000/marker.png", // icon URL
+    iconUrl: "https://img.icons8.com/color/48/000000/marker.png",
     iconSize: [38, 38],
     iconAnchor: [19, 38],
   });
+  const [showChat, setShowChat] = useState(false);
+  const [ownerData, setOwnerData] = useState(null);
+  const [showOwnerProfile, setShowOwnerProfile] = useState(false);
+  const [contacts, setContacts] = useState([]);
+
   useEffect(() => {
     const fetchOffer = async () => {
       const offerRef = doc(collection(db, "Houses"), id);
       const offerDoc = await getDoc(offerRef);
       if (offerDoc.exists()) {
         setOffer({ id: offerDoc.id, ...offerDoc.data() });
+        fetchOwnerData(offerDoc.data().Owner);
       }
     };
     const fetchReservations = async () => {
@@ -174,6 +183,14 @@ const OfferDetails = () => {
     fetchReservationData();
   }, [id]);
 
+  const fetchOwnerData = async (ownerId) => {
+    const ownerRef = doc(collection(db, "Users"), ownerId);
+    const ownerDoc = await getDoc(ownerRef);
+    if (ownerDoc.exists()) {
+      setOwnerData(ownerDoc.data());
+    }
+  };
+
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
@@ -183,13 +200,13 @@ const OfferDetails = () => {
   };
 
   const handleReserveClick = async () => {
-    const uid = auth.currentUser.uid; // Get the UID of the logged-in user
+    const uid = auth.currentUser.uid;
     const userRef = doc(collection(db, "Users"), uid);
     const userDoc = await getDoc(userRef);
 
     const isDateAvailable = !reservations.some(
       (reservation) =>
-        reservation.houseId === offer.id && // Match house ID
+        reservation.houseId === offer.id &&
         ((isBefore(selectedDates[0].startDate, new Date(reservation.endDate)) &&
           isAfter(
             selectedDates[0].startDate,
@@ -205,10 +222,8 @@ const OfferDetails = () => {
       isDateAvailable
     ) {
       try {
-        // 1. Update user balance
         await Promise.all([
           updateDoc(userRef, { balance: userDoc.data().balance - totalCost }),
-          // 2. Create reservation (can be done in parallel)
           setDoc(doc(collection(db, "Reservations"), offer.id), {
             userId: uid,
             houseId: offer.id,
@@ -218,8 +233,7 @@ const OfferDetails = () => {
           }),
         ]);
 
-        // 4. Confirmation
-        alert("Reservation successful! Your balance has been updated.");
+        message.success("Rezervācija veiksmīga! Jūs to varat atrast savā profilā.");
 
         setIsReserved(true);
       } catch (error) {
@@ -275,6 +289,43 @@ const OfferDetails = () => {
       </Box>
     );
   }
+
+  const handleOwnerMenuClick = (e) => {
+    if (e.key === "profile") {
+      setShowOwnerProfile(true);
+    } else if (e.key === "chat") {
+      handleContactsClick();
+    }
+  };
+
+  const ownerMenu = (
+    <Menu onClick={handleOwnerMenuClick}>
+      <Menu.Item key="profile">Profis</Menu.Item>
+      <Menu.Item key="chat"> čats</Menu.Item>
+    </Menu>
+  );
+
+  // Функция для добавления владельца в контакты пользователя
+  const handleContactsClick = async () => {
+    try {
+      const uid = auth.currentUser.uid;
+      const userRef = doc(collection(db, "Users"), uid);
+
+      // Добавляем ID владельца в массив контактов пользователя, используя arrayUnion
+      await updateDoc(userRef, {
+        contacts: arrayUnion({ id: offer.Owner }),
+      });
+
+      // Обновляем локальное состояние контактов
+      setContacts((prevContacts) => [...prevContacts, { id: offer.Owner }]);
+
+      // Открываем чат
+      setShowChat(true);
+    } catch (error) {
+      console.error("Error adding owner to contacts:", error);
+      alert("Error adding owner to contacts. Please try again later.");
+    }
+  };
 
   return (
     <Box
@@ -343,6 +394,26 @@ const OfferDetails = () => {
             </Grid>
           )}
         </Grid>
+        <Grid item xs={12} md={3}>
+          {ownerData && (
+            <div style={{ textAlign: "center" }}>
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ fontWeight: "bold" }}
+              >
+                Saimnieks
+              </Typography>
+              <Avatar src={ownerData.Avatar} alt={ownerData.Name} />
+              <Typography variant="body1" gutterBottom>
+                {ownerData.Name}
+              </Typography>
+              <Dropdown overlay={ownerMenu} placement="bottomRight" arrow>
+                <Button type="primary">Darbības</Button>
+              </Dropdown>
+            </div>
+          )}
+        </Grid>
       </Grid>
       <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
         Apraksts
@@ -395,7 +466,7 @@ const OfferDetails = () => {
             ranges={selectedDates}
             minDate={new Date()}
             locale={lv}
-            disabledDates={getDisabledDates()} // Pass disabled dates to DateRange
+            disabledDates={getDisabledDates()}
           />
         </Grid>
       </Grid>
@@ -507,6 +578,45 @@ const OfferDetails = () => {
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </DialogContent>
+        </Dialog>
+      )}
+
+      {showOwnerProfile && (
+        <Dialog
+          open={showOwnerProfile}
+          onClose={() => setShowOwnerProfile(false)}
+        >
+          <DialogTitle>Профиль владельца</DialogTitle>
+          <DialogContent>
+            <div style={{ textAlign: "center" }}>
+              <Avatar src={ownerData.Avatar} alt={ownerData.Name} />
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ fontWeight: "bold" }}
+              >
+                {ownerData.Name}
+              </Typography>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowOwnerProfile(false)}>
+              Закрыть
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+{showChat && (
+        <Dialog open={showChat} onClose={() => setShowChat(false)}>
+          <DialogTitle>Чат с владельцем</DialogTitle>
+          <DialogContent>
+            <Chat contacts={contacts} />{" "}
+            {/* Передаем массив ID */}  
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowChat(false)}>Закрыть</Button>
+          </DialogActions>
         </Dialog>
       )}
     </Box>

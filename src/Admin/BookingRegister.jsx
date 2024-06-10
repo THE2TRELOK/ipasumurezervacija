@@ -345,22 +345,21 @@ const Bookingregister = () => {
         newPassword={newPassword}
       />
       <Modal
-        title="House Details"
+        title="Piedāvājuma informācija"
         visible={isHouseModalOpen}
         onOk={handleHouseModalOk}
         onCancel={handleHouseModalCancel}
         footer={[
           <Button key="back" onClick={handleHouseModalCancel}>
-            Close
+            Atpakaļ
           </Button>,
         ]}
       >
         {houseDetails && (
           <div>
-            <p><strong>Name:</strong> {houseDetails.Name}</p>
-            <p><strong>City:</strong> {houseDetails.City}</p>
-            <p><strong>Owner:</strong> {houseDetails.Owner}</p>
-            <p><strong>Role:</strong> {houseDetails.Role}</p>
+            <p><strong>Nosaukums:</strong> {houseDetails.Name}</p>
+            <p><strong>Pilseta:</strong> {houseDetails.City}</p>
+            <p><strong>Saimnieks:</strong> {houseDetails.Owner}</p>
             <p><strong>Status:</strong> {houseDetails.Status}</p>
             <Carousel autoplay>
               {houseDetails.Images &&
@@ -374,7 +373,7 @@ const Bookingregister = () => {
                   </div>
                 ))}
             </Carousel>
-            <p><strong>Description:</strong> {houseDetails.Description}</p>
+            <p><strong>Apraksts:</strong> {houseDetails.Description}</p>
             {/* Add more details as needed */}
           </div>
         )}

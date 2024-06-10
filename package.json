@@ -27,6 +27,8 @@
     "dayjs": "^1.11.11",
     "express": "^4.19.2",
     "firebase": "^10.8.0",
+    "firebase-admin": "^12.1.1",
+    "firebase-functions": "^5.0.1",
     "firebase-tools": "^13.10.2",
     "leaflet": "^1.9.4",
     "mdb-react-ui-kit": "^8.0.0",
@@ -43,7 +45,7 @@
     "react-scripts": "^5.0.1",
     "react-stripe-checkout": "^2.6.3",
     "react-stripe-js": "^1.1.5",
-    "stripe": "^15.8.0",
+    "stripe": "^15.10.0",
     "styled-components": "^6.1.9",
     "web-vitals": "^2.1.4"
   },
@@ -51,6 +53,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+     "server": "node src/server.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

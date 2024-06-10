@@ -39,9 +39,7 @@ const Manasrezervacijas = () => {
     { headerName: "UID", field: "uid", flex: 1 },
     { headerName: "Pilseta", field: "City", flex: 1 },
     { headerName: "Vards", field: "Name", flex: 1 },
-    { headerName: "Saimnieks", field: "Owner", flex: 1 },
     { headerName: "Status", field: "Status", flex: 1 },
-    { headerName: "Uztaisīts", field: "createdAt", flex: 1 },
     {
       headerName: "",
       field: "Actions",

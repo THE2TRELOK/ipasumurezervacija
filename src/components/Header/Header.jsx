@@ -50,7 +50,7 @@ const Header = () => {
            
               <li className="header-nav-list">
                 <Button className="Buttons" onClick={handleProfilsClick}>
-                  Profils
+                  Mans kabinets
                 </Button>
               </li>
            

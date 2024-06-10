@@ -1,3 +1,4 @@
+// Importē nepieciešamos moduļus un komponentes no bibliotēkām
 import React, { useState } from "react";
 import { Result, message } from "antd";
 import {
@@ -26,8 +27,11 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import StepIcon from "@mui/material/StepIcon";
-const steps = ["Adreses dati", "Ērtibas", "Apraksts", "Bildes", "Lokacija"];
 
+// Definē soļus Stepper komponentei
+const steps = ["Adreses dati", "Ērtības", "Apraksts", "Bildes", "Lokācija"];
+
+// Funkcija, kas atgriež saturu atkarībā no pašreizējā soli
 function getStepContent(
   step,
   handleFormChange,
@@ -67,13 +71,14 @@ function getStepContent(
         <Result
           status="404"
           title="404"
-          subTitle="Sorry, the page you visited does not exist."
-          extra={<Button type="primary">Back Home</Button>}
+          subTitle="Atvainojiet, apmeklētā lapa neeksistē."
+          extra={<Button type="primary">Atpakaļ uz sākumlapu</Button>}
         />
       );
   }
 }
 
+// Funkcija, kas augšupielādē attēlus uz krātuvi
 const uploadImages = async (files) => {
   const storage = getStorage();
   const urls = await Promise.all(
@@ -87,16 +92,12 @@ const uploadImages = async (files) => {
   return urls;
 };
 
+// Galvenā komponente
 export default function Checkout() {
+  // Valsts mainīgie
   const [activeStep, setActiveStep] = useState(0);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
-  const warning = () => {
-    messageApi.open({
-      type: "warning",
-      content: "Ludzu aizpildiet visus laukus!",
-    });
-  };
   const [formData, setFormData] = useState({
     bookName: "",
     address1: "",
@@ -113,12 +114,21 @@ export default function Checkout() {
   const [imageUrls, setImageUrls] = useState([]);
   const [locationData, setLocationData] = useState(null);
 
+  // Brīdinājuma funkcija
+  const warning = () => {
+    messageApi.open({
+      type: "warning",
+      content: "Lūdzu, aizpildiet visus laukus!",
+    });
+  };
+  
+  // Funkcija, kas pievieno mājas datus Firestore
   const addresFetch = async () => {
     const auth = getAuth();
     const uid = auth.currentUser ? auth.currentUser.uid : null;
 
     if (!uid) {
-      console.error("User is not authenticated");
+      console.error("Lietotājs nav autentificējies");
       return;
     }
 
@@ -131,7 +141,7 @@ export default function Checkout() {
         Price: formData.cena,
         City: formData.city,
         Zip: formData.zip,
-        Status: "Aizsutits",
+        Status: "Aizsūtīts",
         Description: aprakstsData.Apraksts1,
         PeopleCount: aprakstsData.Nummurs,
         Amenities: selectedAmenities,
@@ -142,17 +152,18 @@ export default function Checkout() {
         Owner: uid,
       };
 
-      const userDocRef = collection(db, "Houses");
+      const userDocRef = collection(db, "Mājas");
       await addDoc(userDocRef, houseData);
 
-      console.log("Data successfully sent to Firestore!");
+      console.log("Dati veiksmīgi nosūtīti uz Firestore!");
       setActiveStep(steps.length);
     } catch (error) {
-      console.error("Error sending data to Firestore:", error);
+      console.error("Kļūda sūtot datus uz Firestore:", error);
       throw error;
     }
   };
 
+  // Funkcija, kas apstrādā apraksta datu izmaiņas
   const handleAprakstsChange = (name, value) => {
     setAprakstsData({
       ...aprakstsData,
@@ -160,6 +171,7 @@ export default function Checkout() {
     });
   };
 
+  // Funkcija, kas apstrādā formas datu izmaiņas
   const handleFormChange = (name, value) => {
     setFormData({
       ...formData,
@@ -167,20 +179,24 @@ export default function Checkout() {
     });
   };
 
+  // Funkcija, kas apstrādā izmaiņas ērtībās
   const handleAmenitiesChange = (newAmenities) => {
     setSelectedAmenities(newAmenities);
   };
 
+  // Funkcija, kas apstrādā izmaiņas attēlos
   const handleImagesChange = (files) => {
     setImageFiles(files);
   };
 
+  // Funkcija, kas apstrādā izmaiņas lokācijā
   const handleLocationChange = (location) => {
     const { lat, lng } = location;
     const geoPoint = new GeoPoint(lat, lng);
     setLocationData(geoPoint);
   };
 
+  // Funkcija, kas validē soli
   const validateStep = (step) => {
     switch (step) {
       case 0:
@@ -198,28 +214,34 @@ export default function Checkout() {
     }
   };
 
+  // Funkcija, kas validē adreses formu
   const validateAddressForm = () => {
     const { bookName, address1, address2, city, zip, cena } = formData;
     return bookName && address1 && address2 && city && zip && cena;
   };
 
+  // Funkcija, kas validē ērtības
   const validateErtibas = () => {
     return selectedAmenities.length > 0;
   };
 
+  // Funkcija, kas validē aprakstu
   const validateApraksts = () => {
     const { Apraksts1, Nummurs } = aprakstsData;
     return Apraksts1 && Nummurs;
   };
 
+  // Funkcija, kas validē attēlus
   const validateImages = () => {
     return imageFiles.length >= 3;
   };
 
+  // Funkcija, kas validē lokāciju
   const validateLocation = () => {
     return locationData !== null;
   };
 
+  // Funkcija, kas pāreja uz nākamo soli
   const handleNext = () => {
     if (validateStep(activeStep)) {
       if (activeStep === steps.length - 1) {
@@ -232,6 +254,7 @@ export default function Checkout() {
     }
   };
 
+  // Funkcija, kas pāreja atpakaļ uz iepriekšējo soli
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -273,7 +296,7 @@ export default function Checkout() {
           }}
         >
           <Link
-            href="/profils"
+            href="/Profils"
             style={{ alignSelf: "start", marginBottom: "16px" }}
           >
             <IconButton>
@@ -292,7 +315,7 @@ export default function Checkout() {
                 <Step key={label}>
                   <StepIcon
                     style={{
-                      backgroundColor: "#151f28", // Circle color
+                      backgroundColor: "#151f28", // Apļa krāsa
                       color: "#fff",
                     }}
                   >
@@ -309,7 +332,7 @@ export default function Checkout() {
                 <Typography variant="h5">Paldies!</Typography>
                 <Typography variant="body" color="text.secondary">
                   Paldies, ka izmantojat mūsu pakalpojumus, jūsu piedāvājums ir
-                  nosūtīts administratoram parbaudes nolukiem, un drīz to varēs
+                  nosūtīts administratoram parbaudes nolūkiem, un drīz to varēs
                   redzēt arī citi lietotāji.
                 </Typography>
                 <Button
