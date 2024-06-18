@@ -6,7 +6,10 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  query,
+  where,
   getDocs,
+  onSnapshot,
   arrayUnion,
 } from "firebase/firestore";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -24,16 +27,19 @@ import {
   TextField,
   Avatar,
   Rating,
-  Stack,
-  Divider,
   Paper,
   DialogTitle,
   DialogActions,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
+  Button,
+  Snackbar,
+  Alert,
+  List,
+  ListItem,
+  ListItemText,
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
 } from "@mui/material";
 import {
   Close as CloseIcon,
@@ -59,16 +65,14 @@ import {
   addDays,
   isBefore,
   isAfter,
-  format,
   startOfDay,
   endOfDay,
 } from "date-fns";
 import { lv } from "date-fns/locale";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { Menu, Dropdown, Button,message } from "antd";
+import { Menu, Dropdown } from "antd";
 import Chat from "../Chat/Chat";
-
 
 const amenitiesIcons = {
   wifi: <WifiIcon />,
@@ -138,7 +142,6 @@ const OfferDetails = () => {
       text: "Viss bija perfekti! Ļoti jauka saimniece un brīnišķīga vieta.",
     },
   ]);
-  const [reservationData, setReservationData] = useState([]);
   const customIcon = L.icon({
     iconUrl: "https://img.icons8.com/color/48/000000/marker.png",
     iconSize: [38, 38],
@@ -148,48 +151,62 @@ const OfferDetails = () => {
   const [ownerData, setOwnerData] = useState(null);
   const [showOwnerProfile, setShowOwnerProfile] = useState(false);
   const [contacts, setContacts] = useState([]);
+  const [ownerId, setOwnerId] = useState(null);
+  const [peopleCount, setPeopleCount] = useState(1);
+  const [showReservationError, setShowReservationError] = useState(false);
+  const [ownerHouses, setOwnerHouses] = useState([]);
 
   useEffect(() => {
-    const fetchOffer = async () => {
+    const fetchOfferAndData = async () => {
       const offerRef = doc(collection(db, "Houses"), id);
       const offerDoc = await getDoc(offerRef);
+
       if (offerDoc.exists()) {
-        setOffer({ id: offerDoc.id, ...offerDoc.data() });
-        fetchOwnerData(offerDoc.data().Owner);
+        const offerData = offerDoc.data();
+        setOffer({ id: offerDoc.id, ...offerData });
+        setOwnerId(offerData.Owner);
+
+        // Fetch owner data and houses
+        const ownerRef = doc(collection(db, "Users"), offerData.Owner);
+        const ownerDoc = await getDoc(ownerRef);
+
+        if (ownerDoc.exists()) {
+          setOwnerData(ownerDoc.data());
+
+          const housesRef = collection(db, "Houses");
+          const q = query(housesRef, where("Owner", "==", offerData.Owner));
+          const querySnapshot = await getDocs(q);
+          const houses = querySnapshot.docs.map((doc) => {
+            const houseData = doc.data();
+            return {
+              id: doc.id,
+              name: houseData.Name,
+              image: houseData.Images[0],
+              price: houseData.Price,
+            };
+          });
+          setOwnerHouses(houses);
+        }
       }
     };
-    const fetchReservations = async () => {
-      const reservationRef = collection(db, "Reservations");
-      const snapshot = await getDocs(reservationRef);
-      const reservationsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setReservations(reservationsData);
-    };
 
-    const fetchReservationData = async () => {
-      const reservationDataRef = collection(db, "ReservationData");
-      const snapshot = await getDocs(reservationDataRef);
-      const reservationData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setReservationData(reservationData);
-    };
-
-    fetchOffer();
-    fetchReservations();
-    fetchReservationData();
+    fetchOfferAndData();
   }, [id]);
 
-  const fetchOwnerData = async (ownerId) => {
-    const ownerRef = doc(collection(db, "Users"), ownerId);
-    const ownerDoc = await getDoc(ownerRef);
-    if (ownerDoc.exists()) {
-      setOwnerData(ownerDoc.data());
-    }
-  };
+  useEffect(() => {
+    const unsubscribeReservations = onSnapshot(
+      collection(db, "Reservations"),
+      (snapshot) => {
+        const updatedReservations = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setReservations(updatedReservations);
+      }
+    );
+
+    return () => unsubscribeReservations();
+  }, []);
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -203,59 +220,106 @@ const OfferDetails = () => {
     const uid = auth.currentUser.uid;
     const userRef = doc(collection(db, "Users"), uid);
     const userDoc = await getDoc(userRef);
+    const offerRef = doc(collection(db, "Houses"), id);
+
+    if (peopleCount < 1 || peopleCount > offer.PeopleCount) {
+      setShowReservationError(true);
+      return;
+    }
 
     const isDateAvailable = !reservations.some(
       (reservation) =>
         reservation.houseId === offer.id &&
-        ((isBefore(selectedDates[0].startDate, new Date(reservation.endDate)) &&
+        ((isBefore(
+          selectedDates[0].startDate,
+          new Date(reservation.endDate)
+        ) &&
           isAfter(
             selectedDates[0].startDate,
             new Date(reservation.startDate)
           )) ||
-          (isBefore(selectedDates[0].endDate, new Date(reservation.endDate)) &&
-            isAfter(selectedDates[0].endDate, new Date(reservation.startDate))))
+          (isBefore(
+            selectedDates[0].endDate,
+            new Date(reservation.endDate)
+          ) &&
+            isAfter(
+              selectedDates[0].endDate,
+              new Date(reservation.startDate)
+            )))
     );
 
-    if (
-      userDoc.exists() &&
-      userDoc.data().balance >= totalCost &&
-      isDateAvailable
-    ) {
-      try {
-        await Promise.all([
-          updateDoc(userRef, { balance: userDoc.data().balance - totalCost }),
-          setDoc(doc(collection(db, "Reservations"), offer.id), {
-            userId: uid,
-            houseId: offer.id,
-            startDate: selectedDates[0].startDate,
-            endDate: selectedDates[0].endDate,
-            OwnerId: offer.Owner,
-          }),
-        ]);
+    if (isDateAvailable) {
+      if (userDoc.exists() && userDoc.data().balance >= totalCost) {
+        try {
+          const reservationRef = doc(collection(db, "Reservations"));
 
-        message.success("Rezervācija veiksmīga! Jūs to varat atrast savā profilā.");
+          await Promise.all([
+            updateDoc(userRef, {
+              balance: userDoc.data().balance - totalCost,
+            }),
+            setDoc(reservationRef, {
+              userId: uid,
+              houseId: offer.id,
+              startDate: selectedDates[0].startDate,
+              endDate: selectedDates[0].endDate,
+              totalCost: totalCost,
+              peopleCount: peopleCount,
+              OwnerId: offer.Owner,
+            }),
+            updateDoc(offerRef, {
+              reservations: arrayUnion({
+                startDate: selectedDates[0].startDate,
+                endDate: selectedDates[0].endDate,
+              }),
+            }),
+          ]);
 
-        setIsReserved(true);
-      } catch (error) {
-        console.error("Error updating balance or creating reservation:", error);
-        alert("Error processing reservation. Please try again later.");
+          setReservations([
+            ...reservations,
+            {
+              id: reservationRef.id,
+              userId: uid,
+              houseId: offer.id,
+              startDate: selectedDates[0].startDate,
+              endDate: selectedDates[0].endDate,
+              totalCost: totalCost,
+              peopleCount: peopleCount,
+              OwnerId: offer.Owner,
+            },
+          ]);
+
+          setPeopleCount(1);
+
+          alert("Rezervācija veiksmīga!");
+          setIsReserved(true);
+        } catch (error) {
+          console.error("Kļūda, apstrādājot rezervāciju:", error);
+          alert(
+            "Kļūda, apstrādājot rezervāciju. Lūdzu, mēģiniet vēlreiz vēlāk."
+          );
+        }
+      } else {
+        alert("Nepietiek līdzekļu!");
       }
     } else {
-      alert("Insufficient funds or dates are not available!");
+      alert("Datumi nav pieejami!");
     }
   };
 
   const getDisabledDates = () => {
     const disabledDates = [];
     reservations.forEach((reservation) => {
-      const startDate = new Date(reservation.startDate);
-      const endDate = new Date(reservation.endDate);
-      for (
-        let date = startOfDay(startDate);
-        isBefore(date, endDate);
-        date = addDays(date, 1)
-      ) {
-        disabledDates.push(date);
+      if (reservation.houseId === id) {
+        const startDate = reservation.startDate.toDate();
+        const endDate = reservation.endDate.toDate();
+
+        for (
+          let date = startOfDay(startDate);
+          isBefore(date, endDate);
+          date = addDays(date, 1)
+        ) {
+          disabledDates.push(date);
+        }
       }
     });
     return disabledDates;
@@ -273,6 +337,7 @@ const OfferDetails = () => {
     } else {
       setTotalCost(0);
     }
+    setIsReserved(false);
   }, [selectedDates, offer]);
 
   if (!offer) {
@@ -300,38 +365,39 @@ const OfferDetails = () => {
 
   const ownerMenu = (
     <Menu onClick={handleOwnerMenuClick}>
-      <Menu.Item key="profile">Profis</Menu.Item>
-      <Menu.Item key="chat"> čats</Menu.Item>
+      <Menu.Item key="profile">Profils</Menu.Item>
+      <Menu.Item key="chat"> Čats</Menu.Item>
     </Menu>
   );
 
-  // Функция для добавления владельца в контакты пользователя
   const handleContactsClick = async () => {
     try {
       const uid = auth.currentUser.uid;
       const userRef = doc(collection(db, "Users"), uid);
 
-      // Добавляем ID владельца в массив контактов пользователя, используя arrayUnion
       await updateDoc(userRef, {
         contacts: arrayUnion({ id: offer.Owner }),
       });
 
-      // Обновляем локальное состояние контактов
       setContacts((prevContacts) => [...prevContacts, { id: offer.Owner }]);
 
-      // Открываем чат
       setShowChat(true);
     } catch (error) {
-      console.error("Error adding owner to contacts:", error);
-      alert("Error adding owner to contacts. Please try again later.");
+      console.error(
+        "Kļūda, pievienojot saimnieku kontaktu sarakstam:",
+        error
+      );
+      alert(
+        "Kļūda, pievienojot saimnieku kontaktu sarakstam. Lūdzu, mēģiniet vēlreiz vēlāk."
+      );
     }
   };
 
   return (
     <Box
       p={4}
-      style={{
-        backgroundColor: "#f7f7f7",
+      sx={{
+        backgroundColor: "#f2f2f2",
         color: "#333",
         maxWidth: "1200px",
         margin: "0 auto",
@@ -355,10 +421,10 @@ const OfferDetails = () => {
         <Grid item xs={12} md={5}>
           <img
             src={offer.Images[0]}
-            alt="Main"
+            alt="Galvenais"
             style={{
               maxWidth: "100%",
-              maxHeight: "400px",
+              height: "500px",
               objectFit: "cover",
               borderRadius: "8px",
               cursor: "pointer",
@@ -396,22 +462,30 @@ const OfferDetails = () => {
         </Grid>
         <Grid item xs={12} md={3}>
           {ownerData && (
-            <div style={{ textAlign: "center" }}>
-              <Typography
-                variant="h6"
-                gutterBottom
-                style={{ fontWeight: "bold" }}
-              >
-                Saimnieks
-              </Typography>
-              <Avatar src={ownerData.Avatar} alt={ownerData.Name} />
-              <Typography variant="body1" gutterBottom>
-                {ownerData.Name}
-              </Typography>
-              <Dropdown overlay={ownerMenu} placement="bottomRight" arrow>
-                <Button type="primary">Darbības</Button>
-              </Dropdown>
-            </div>
+            <Paper elevation={3} sx={{ padding: 2, borderRadius: 8 }}>
+              <div style={{ textAlign: "center" }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  style={{ fontWeight: "bold" }}
+                >
+                  Saimnieks
+                </Typography>
+                <Avatar
+                  src={ownerData.Image}
+                  alt={ownerData.Name}
+                  sx={{ width: 80, height: 80, margin: "0 auto" }}
+                />
+                <Typography variant="body1" gutterBottom>
+                  {ownerData.Name}
+                </Typography>
+                <Dropdown overlay={ownerMenu} placement="bottomRight" arrow>
+                  <Button variant="outlined" type="primary">
+                    Darbības
+                  </Button>
+                </Dropdown>
+              </div>
+            </Paper>
           )}
         </Grid>
       </Grid>
@@ -452,13 +526,18 @@ const OfferDetails = () => {
           </Grid>
         ))}
       </Grid>
-      <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
-        Cena
-      </Typography>
-      <Typography gutterBottom>{offer.Price} € par nakti</Typography>
+      <Grid container spacing={2} alignItems="center" mb={4}>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
+            Cena
+          </Typography>
+          <Typography variant="h5" gutterBottom sx={{ color: "#007bff" }}>
+            {offer.Price} €{" "}
+            <span style={{ fontSize: "1rem" }}>par nakti</span>
+          </Typography>
+        </Grid>
 
-      <Grid container spacing={2} mb={4} style={{ marginTop: "20px" }}>
-        <Grid item xs={12} md={12}>
+        <Grid item xs={12} md={6}>
           <DateRange
             editableDateInputs={true}
             onChange={(item) => setSelectedDates([item.selection])}
@@ -471,11 +550,30 @@ const OfferDetails = () => {
         </Grid>
       </Grid>
 
+      <Grid container spacing={2} mb={4} style={{ marginTop: "20px" }}>
+        <Grid item xs={12} md={12}>
+          <TextField
+            label="Cilvēku skaits"
+            type="number"
+            value={peopleCount}
+            onChange={(e) => setPeopleCount(parseInt(e.target.value) || 1)}
+            fullWidth
+            inputProps={{ min: 1, max: offer.PeopleCount }}
+          />
+        </Grid>
+      </Grid>
+
       <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
         <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
-          Kopējā cena
+          Kopējā cena:
         </Typography>
-        <Typography gutterBottom>{totalCost.toFixed(2)} €</Typography>
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{ color: "#333", fontWeight: 600 }}
+        >
+          {totalCost.toFixed(2)} €
+        </Typography>
       </Grid>
 
       <Box textAlign="right" mt={4}>
@@ -501,6 +599,20 @@ const OfferDetails = () => {
           </Button>
         )}
       </Box>
+
+      <Snackbar
+        open={showReservationError}
+        autoHideDuration={6000}
+        onClose={() => setShowReservationError(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setShowReservationError(false)}
+          severity="error"
+        >
+          Nederīgs cilvēku skaits!
+        </Alert>
+      </Snackbar>
 
       <div style={{ height: "400px", marginTop: "30px" }}>
         <MapContainer
@@ -586,10 +698,10 @@ const OfferDetails = () => {
           open={showOwnerProfile}
           onClose={() => setShowOwnerProfile(false)}
         >
-          <DialogTitle>Профиль владельца</DialogTitle>
+          <DialogTitle>Saimnieka profils</DialogTitle>
           <DialogContent>
             <div style={{ textAlign: "center" }}>
-              <Avatar src={ownerData.Avatar} alt={ownerData.Name} />
+              <Avatar src={ownerData.Image} alt={ownerData.Name} />
               <Typography
                 variant="h6"
                 gutterBottom
@@ -597,27 +709,46 @@ const OfferDetails = () => {
               >
                 {ownerData.Name}
               </Typography>
+
+              <Typography variant="subtitle1" gutterBottom>
+                Mājas:
+              </Typography>
+              <Grid container spacing={2}>
+                {ownerHouses.map((house) => (
+                  <Grid item xs={12} sm={6} md={4} key={house.id}>
+                    <Card sx={{ maxWidth: 345 }}>
+                      <CardActionArea>
+                        <CardMedia
+                          component="img"
+                          height="140"
+                          image={house.image}
+                          alt={house.name}
+                        />
+                        <CardContent>
+                          <Typography gutterBottom variant="h6" component="div">
+                            {house.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {house.price} € par nakti
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
             </div>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setShowOwnerProfile(false)}>
-              Закрыть
+              Aizvērt
             </Button>
           </DialogActions>
         </Dialog>
       )}
 
-{showChat && (
-        <Dialog open={showChat} onClose={() => setShowChat(false)}>
-          <DialogTitle>Чат с владельцем</DialogTitle>
-          <DialogContent>
-            <Chat contacts={contacts} />{" "}
-            {/* Передаем массив ID */}  
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setShowChat(false)}>Закрыть</Button>
-          </DialogActions>
-        </Dialog>
+      {showChat && (
+        <Chat ownerId={ownerId} onClose={() => setShowChat(false)} />
       )}
     </Box>
   );

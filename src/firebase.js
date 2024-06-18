@@ -1,9 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { setDoc, doc, getDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, limit, doc, getDoc } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, createUserWithEmailAndPassword } from "firebase/auth";
 import { getFunctions } from "firebase/functions";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -25,7 +23,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const functions = getFunctions(app);
-export { db, auth, createUserWithEmailAndPassword,functions  };
+
+export { db, auth, functions, GoogleAuthProvider, signInWithPopup, signOut, createUserWithEmailAndPassword, collection, addDoc, serverTimestamp, query, orderBy, limit, doc, getDoc };
 
 export const getUserRole = async (userId) => {
   try {
