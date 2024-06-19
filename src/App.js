@@ -16,7 +16,8 @@ import { auth, getUserRole } from "./firebase.js";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin, Result, Button } from "antd";
 import { UserProvider, useUser } from "./components/UserContext";
-import Manasrezervacijas from "./components/RezervacijasPievienojums/ManasRezervacijas.jsx";
+import Manasrezervacijas from "./components/ManasRezervacijas/ManasRezervacijas.jsx";
+import CheckoutForm from "./components/CheckoutForm.js";
 import Bookingregister from "./Admin/BookingRegister.jsx";
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -111,11 +112,22 @@ function App() {
                   )
                 }
               />
+              
               <Route
                 path="/manasrezervacijas"
                 element={
                   userRole === "User" || userRole === "Admin" ? (
                     <Manasrezervacijas />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+               <Route
+                path="/checkoutform"
+                element={
+                  userRole === "User" || userRole === "Admin" ? (
+                    <CheckoutForm />
                   ) : (
                     <Navigate to="/login" />
                   )

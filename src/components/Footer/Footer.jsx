@@ -20,7 +20,7 @@ const Footer = () => {
             {new Date().getFullYear()} EstatoRent. Visas tiesibas aizsargatas.
           </span>
         </div>
-        <a href="https://github.com" target="_blank" className="item3">
+        <a href="https://github.com/THE2TRELOK/ipasumurezervacija" target="_blank" className="item3">
           <FontAwesomeIcon icon={faGithub} />
         </a>
         <a href="http://fb.com" target="_blank" className="item4">

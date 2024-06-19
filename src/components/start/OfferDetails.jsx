@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { message } from "antd"; 
 import {
   collection,
   doc,
@@ -200,6 +201,8 @@ const OfferDetails = () => {
         const updatedReservations = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
+          startDate: doc.data().startDate.toDate(), // Convert to Date object
+          endDate: doc.data().endDate.toDate(), // Convert to Date object
         }));
         setReservations(updatedReservations);
       }
@@ -214,6 +217,20 @@ const OfferDetails = () => {
 
   const handleApartamentiClick = () => {
     navigate("/Apartamenti");
+  };
+
+  const handleDateChange = (item) => {
+    setSelectedDates([item.selection]);
+    // If a single day is selected, make the endDate the next day
+    if (item.selection.startDate.getTime() === item.selection.endDate.getTime()) {
+      setSelectedDates([
+        {
+          startDate: item.selection.startDate,
+          endDate: addDays(item.selection.endDate, 1), // Add one day
+          key: "selection",
+        },
+      ]);
+    }
   };
 
   const handleReserveClick = async () => {
@@ -290,19 +307,19 @@ const OfferDetails = () => {
 
           setPeopleCount(1);
 
-          alert("Rezervācija veiksmīga!");
+          message.success("Rezervācija veiksmīga!"); // Use antd message
           setIsReserved(true);
         } catch (error) {
           console.error("Kļūda, apstrādājot rezervāciju:", error);
-          alert(
+          message.error(
             "Kļūda, apstrādājot rezervāciju. Lūdzu, mēģiniet vēlreiz vēlāk."
-          );
+          ); // Use antd message
         }
       } else {
-        alert("Nepietiek līdzekļu!");
+        message.error("Nepietiek līdzekļu!"); // Use antd message
       }
     } else {
-      alert("Datumi nav pieejami!");
+      message.error("Datumi nav pieejami!"); // Use antd message
     }
   };
 
@@ -310,8 +327,8 @@ const OfferDetails = () => {
     const disabledDates = [];
     reservations.forEach((reservation) => {
       if (reservation.houseId === id) {
-        const startDate = reservation.startDate.toDate();
-        const endDate = reservation.endDate.toDate();
+        const startDate = new Date(reservation.startDate);
+        const endDate = new Date(reservation.endDate);
 
         for (
           let date = startOfDay(startDate);
@@ -330,7 +347,7 @@ const OfferDetails = () => {
       const days = Math.ceil(
         (selectedDates[0].endDate - selectedDates[0].startDate) /
           (1000 * 3600 * 24)
-      );
+      ); 
       const baseCost = days * offer.Price;
       const tax = baseCost * 0.12;
       setTotalCost(baseCost + tax);
@@ -387,9 +404,9 @@ const OfferDetails = () => {
         "Kļūda, pievienojot saimnieku kontaktu sarakstam:",
         error
       );
-      alert(
+      message.error(
         "Kļūda, pievienojot saimnieku kontaktu sarakstam. Lūdzu, mēģiniet vēlreiz vēlāk."
-      );
+      ); // Use antd message
     }
   };
 
@@ -540,7 +557,7 @@ const OfferDetails = () => {
         <Grid item xs={12} md={6}>
           <DateRange
             editableDateInputs={true}
-            onChange={(item) => setSelectedDates([item.selection])}
+            onChange={handleDateChange} 
             moveRangeOnFirstSelection={false}
             ranges={selectedDates}
             minDate={new Date()}
@@ -741,7 +758,7 @@ const OfferDetails = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setShowOwnerProfile(false)}>
-              Aizvērt
+              Aizvērt 
             </Button>
           </DialogActions>
         </Dialog>

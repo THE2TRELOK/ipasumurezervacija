@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { message, Upload, Layout } from "antd";
+import { message, Upload, Layout, Button as AntButton } from "antd";
 import { db, auth } from "../firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
 import Navbar from "../components/LeftSideNav/Navbar";
 import {
@@ -14,15 +14,18 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  Button,
   Divider,
   Grid,
   Container,
+  Button,
+  Link
 } from "@mui/material";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { LikeOutlined } from "@ant-design/icons";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import CheckoutForm from './CheckoutForm'; // Импортируем CheckoutForm
+import { useNavigate } from 'react-router-dom';
+
+import CheckoutForm from "./CheckoutForm"; // Import CheckoutForm
 
 const { Content } = Layout;
 
@@ -46,7 +49,8 @@ const Profils = () => {
   const [editedName, setEditedName] = useState("");
   const [editedSurname, setEditedSurname] = useState("");
   const [editedImage, setEditedImage] = useState(null);
-  const [paymentAmount, setPaymentAmount] = useState(""); // State для суммы платежа
+  const [paymentAmount, setPaymentAmount] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -74,7 +78,7 @@ const Profils = () => {
       let userDataToUpdate = {
         Name: editedName,
         Surname: editedSurname,
-        createdAt: userData.createdAt, // Include the existing createdAt value
+        createdAt: userData.createdAt, 
       };
 
       // Check if editedImage exists and is a data URL
@@ -103,6 +107,16 @@ const Profils = () => {
       setEditModalVisible(false);
     } catch (error) {
       message.error("Kluda atjaunojot datus");
+      console.error(error);
+    }
+  };
+
+  const handlePayment = async () => {
+    try {
+      // Navigate to the fake payment page
+      navigate('/CheckoutForm', { state: { amount: paymentAmount, userData: userData } }); 
+    } catch (error) {
+      message.error("Kluda maksājuma apstrādes laikā");
       console.error(error);
     }
   };
@@ -157,7 +171,21 @@ const Profils = () => {
                         <Typography variant="h6" gutterBottom>
                           Veikt maksājumu
                         </Typography>
-                        <CheckoutForm amount={paymentAmount} setAmount={setPaymentAmount} />
+                        <TextField
+                          label="Ievadiet summu"
+                          type="number"
+                          value={paymentAmount}
+                          onChange={(e) => setPaymentAmount(e.target.value)}
+                          fullWidth
+                          margin="normal"
+                        />
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handlePayment}
+                        >
+                          Turpināt
+                        </Button>
                       </Box>
                     </Box>
                   )}
