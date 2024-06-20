@@ -23,9 +23,9 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
-import Logo from "./House.svg"; // Assuming your Logo is in the same directory
+import Logo from "./House.svg"; // Pieņemot, ka jūsu logo ir tajā pašā direktorijā
 
-// Styling for message bubbles
+// Stila definīcijas ziņojumu burbuļiem
 const StyledMessage = styled(Box)(({ theme, messageClass }) => ({
   maxWidth: "70%",
   padding: "12px 16px",
@@ -46,7 +46,7 @@ const StyledMessage = styled(Box)(({ theme, messageClass }) => ({
   },
 }));
 
-// Styling for the Chat component
+// Stila definīcijas čata komponentam
 const ChatContainer = styled(Box)(({ theme }) => ({
   position: "fixed",
   top: "50%",
@@ -61,8 +61,8 @@ const ChatContainer = styled(Box)(({ theme }) => ({
   padding: "20px",
   boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
   zIndex: 1000,
-  backgroundColor: 'black', // Background black
-  backgroundImage: `url(${Logo})`, // Add your house SVG 
+  backgroundColor: '#F0F0F0', // Mainīts fons uz gaiši pelēku
+  backgroundImage: `url(${Logo})`, // Pievienojiet jūsu mājas SVG 
   backgroundRepeat: 'no-repeat',
   backgroundSize: 'cover',
 }));
@@ -74,12 +74,12 @@ const ChatHeader = styled(Box)(({ theme }) => ({
   mb: 2,
   position: "relative",
   zIndex: 1,
-  backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent overlay
+  backgroundColor: '#333', // Tumši pelēks fons galvene
   borderRadius: "10px", 
-  padding: "15px", // Add some padding for the header
+  padding: "15px", // Pievienojiet nedaudz atstarpes galvene
 }));
 
-// Styling for the message input
+// Stila definīcijas ziņojuma ievadei
 const MessageInput = styled(TextField)(({ theme }) => ({
   borderRadius: "24px",
   backgroundColor: "white",
@@ -121,7 +121,7 @@ const Chat = ({ ownerId, onClose }) => {
     fetchChatId();
   }, [ownerId]);
 
-  // Объединяем два useEffect в один
+  // Apvienojam divus useEffect vienā
   useEffect(() => {
     let unsubscribeFromSnapshot = null;
 
@@ -139,12 +139,12 @@ const Chat = ({ ownerId, onClose }) => {
       }
     };
 
-    setupChat(); // Запускаем (или перезапускаем) подписку
+    setupChat(); // Palaidiet (vai restartējiet) abonementu
 
-    // При размонтировании компонента
+    // Kad komponents tiek atmontēts
     return () => {
       if (unsubscribeFromSnapshot) {
-        unsubscribeFromSnapshot(); // Отписываемся от onSnapshot
+        unsubscribeFromSnapshot(); // Atteikties no onSnapshot abonementa
       }
     };
   }, [chatId]);
@@ -189,7 +189,7 @@ const Chat = ({ ownerId, onClose }) => {
             textShadow: "0px 2px 4px rgba(0, 0, 0, 0.5)",
           }}
         >
-          Чат с владельцем
+          Čats ar īpašnieku
         </Typography>
         <IconButton onClick={onClose} sx={{ color: "white" }}>
           <CloseIcon />
@@ -222,7 +222,7 @@ const Chat = ({ ownerId, onClose }) => {
           value={formValue}
           onChange={(e) => setFormValue(e.target.value)}
           fullWidth
-          placeholder="Напишите сообщение..."
+          placeholder="Ievadiet ziņojumu..."
           variant="outlined"
           InputProps={{
             endAdornment: (
@@ -252,7 +252,7 @@ const ChatMessage = ({ message, currentUserId }) => {
   const [senderAvatar, setSenderAvatar] = useState(null);
 
   useEffect(() => {
-    // Get the user document reference
+    // Saņemt lietotāja dokumenta atsauci
     const userRef = doc(db, 'Users', senderId);
     const unsubscribe = onSnapshot(userRef, (userDoc) => {
       if (userDoc.exists()) {
@@ -262,7 +262,7 @@ const ChatMessage = ({ message, currentUserId }) => {
       }
     });
 
-    return () => unsubscribe(); // Unsubscribe when component unmounts
+    return () => unsubscribe(); // Atteikties no abonementa, kad komponents tiek atmontēts
   }, [senderId]);
 
   return (

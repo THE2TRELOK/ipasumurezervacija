@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { message, Upload, Layout, Button as AntButton } from "antd";
 import { db, auth } from "../firebase";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from "firebase/storage";
 import Navbar from "../components/LeftSideNav/Navbar";
 import {
   Box,
@@ -18,14 +23,12 @@ import {
   Grid,
   Container,
   Button,
-  Link
+  Link,
 } from "@mui/material";
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { LikeOutlined } from "@ant-design/icons";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
-
-import CheckoutForm from "./CheckoutForm"; // Import CheckoutForm
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
 const { Content } = Layout;
 
@@ -34,7 +37,8 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundImage: "url('https://img.freepik.com/free-vector/gray-abstract-wireframe-background_53876-99911.jpg')",
+          backgroundImage:
+            "url('https://img.freepik.com/free-vector/gray-abstract-wireframe-background_53876-99911.jpg')",
           backgroundSize: "cover",
           backgroundAttachment: "fixed",
         },
@@ -78,7 +82,7 @@ const Profils = () => {
       let userDataToUpdate = {
         Name: editedName,
         Surname: editedSurname,
-        createdAt: userData.createdAt, 
+        createdAt: userData.createdAt,
       };
 
       // Check if editedImage exists and is a data URL
@@ -111,14 +115,16 @@ const Profils = () => {
     }
   };
 
-  const handlePayment = async () => {
-    try {
-      // Navigate to the fake payment page
-      navigate('/CheckoutForm', { state: { amount: paymentAmount, userData: userData } }); 
-    } catch (error) {
-      message.error("Kluda maksājuma apstrādes laikā");
-      console.error(error);
+  const handlePayment = () => {
+    const amount = parseFloat(paymentAmount);
+    if (!amount || amount < 5 || amount > 100000) {
+      message.error("Lūdzu ievadiet summu no 5 līdz 100000 EUR");
+      return;
     }
+
+    navigate("/CheckoutForm", {
+      state: { amount: paymentAmount, userData: userData },
+    });
   };
 
   return (
@@ -151,7 +157,8 @@ const Profils = () => {
                         {userData.Name}
                       </Typography>
                       <Typography variant="body2" sx={{ marginBottom: "1rem" }}>
-                        <LikeOutlined style={{ verticalAlign: "middle" }} /> 200 Atsauksmes
+                        <LikeOutlined style={{ verticalAlign: "middle" }} /> 200
+                        Atsauksmes
                       </Typography>
                       <Divider sx={{ marginY: "1rem" }} />
                       <Typography variant="body2" color="textSecondary">
@@ -232,7 +239,10 @@ const Profils = () => {
         </Layout>
       </Layout>
 
-      <Dialog open={editModalVisible} onClose={() => setEditModalVisible(false)}>
+      <Dialog
+        open={editModalVisible}
+        onClose={() => setEditModalVisible(false)}
+      >
         <DialogTitle>Rediget profilu</DialogTitle>
         <DialogContent>
           <TextField
@@ -263,12 +273,20 @@ const Profils = () => {
             }}
             showUploadList={false}
           >
-            <Button variant="outlined" component="span" startIcon={<UploadFileIcon />}>
+            <Button
+              variant="outlined"
+              component="span"
+              startIcon={<UploadFileIcon />}
+            >
               Augšuplādēt jaunu attēlu
             </Button>
           </Upload>
           {editedImage && (
-            <MuiAvatar alt="Preview" src={editedImage} sx={{ width: 80, height: 80, marginTop: '1rem' }} />
+            <MuiAvatar
+              alt="Preview"
+              src={editedImage}
+              sx={{ width: 80, height: 80, marginTop: "1rem" }}
+            />
           )}
         </DialogContent>
         <DialogActions>

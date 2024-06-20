@@ -93,16 +93,10 @@ const Navbar = () => {
           <Link to="/manasrezervacijas">Mana māja</Link>
         </Menu.Item>
         <Divider className="antd-divider" />
-        <Menu.Item key="/settings" icon={<SettingOutlined />}>
-          <Link to="/settings">Rezervācijas</Link>
+        <Menu.Item key="/rezervacijas" icon={<SettingOutlined />}>
+          <Link to="/rezervacijas">Rezervācijas</Link>
         </Menu.Item>
-        {userRole === "Admin" && (
-          <>
-            <Menu.Item key="/logfiles" icon={<FileSearchOutlined />}>
-              <Link to="/logfiles">Žurnālfaili</Link>
-            </Menu.Item>
-          </>
-        )}
+      
          <Menu.Item key="/" icon={<SettingOutlined />}>
           <Link to="/">Iziet no kabineta</Link>
         </Menu.Item>

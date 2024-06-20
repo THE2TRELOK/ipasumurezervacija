@@ -21,7 +21,7 @@ const Header = () => {
   };
 
   const handleProfilsClick = () => {
-    navigate("/userregistry");
+    navigate("/profils");
   };
 
   return (

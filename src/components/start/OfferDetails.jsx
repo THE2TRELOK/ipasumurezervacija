@@ -120,6 +120,7 @@ const OfferDetails = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isReserved, setIsReserved] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [selectedDates, setSelectedDates] = useState([
     {
       startDate: new Date(),
@@ -198,13 +199,23 @@ const OfferDetails = () => {
     const unsubscribeReservations = onSnapshot(
       collection(db, "Reservations"),
       (snapshot) => {
-        const updatedReservations = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          startDate: doc.data().startDate.toDate(), // Convert to Date object
-          endDate: doc.data().endDate.toDate(), // Convert to Date object
-        }));
-        setReservations(updatedReservations);
+        const updatedReservations = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const startDate = data.startDate ? data.startDate.toDate() : null;
+          const endDate = data.endDate ? data.endDate.toDate() : null;
+          return {
+            id: doc.id,
+            ...data,
+            startDate: startDate,
+            endDate: endDate,
+          };
+        });
+        
+        // Filter out canceled reservations (Status: "Atcelts")
+        const activeReservations = updatedReservations.filter(
+          (reservation) => reservation.Status !== "Atcelts"
+        );
+        setReservations(activeReservations);
       }
     );
 
@@ -234,9 +245,17 @@ const OfferDetails = () => {
   };
 
   const handleReserveClick = async () => {
-    const uid = auth.currentUser.uid;
+    const uid = auth.currentUser?.uid; // Check if user is logged in
+    if (uid === null) {
+      message.error("Jums japiesledzas sitemai!");
+      return; // Stop execution if user is not logged in
+    }else{
+  
+    // Now you can safely access uid
     const userRef = doc(collection(db, "Users"), uid);
     const userDoc = await getDoc(userRef);
+  
+    // Get the offer reference correctly using the offer ID (id)
     const offerRef = doc(collection(db, "Houses"), id);
 
     if (peopleCount < 1 || peopleCount > offer.PeopleCount) {
@@ -321,7 +340,20 @@ const OfferDetails = () => {
     } else {
       message.error("Datumi nav pieejami!"); // Use antd message
     }
+  }
   };
+
+  useEffect(() => {
+    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setIsButtonDisabled(false); // Enable button if logged in
+      } else {
+        setIsButtonDisabled(true); // Disable button if not logged in
+      }
+    });
+
+    return () => unsubscribeAuth(); // Cleanup on unmount
+  }, []);
 
   const getDisabledDates = () => {
     const disabledDates = [];
@@ -407,6 +439,35 @@ const OfferDetails = () => {
       message.error(
         "Kļūda, pievienojot saimnieku kontaktu sarakstam. Lūdzu, mēģiniet vēlreiz vēlāk."
       ); // Use antd message
+    }
+  };
+
+  const handleCancelReservation = async (reservationId,setRowData) => {
+    try {
+      const reservationDocRef = doc(db, "Reservations", reservationId);
+      const reservationData = await getDoc(reservationDocRef).then((doc) => doc.data());
+      const currentDate = new Date(); // Get current date
+      if (currentDate < reservationData.startDate.toDate()) { // Check if reservation hasn't started yet
+        await updateDoc(reservationDocRef, {
+          Status: "Atcelts",
+          startDate: null,
+          endDate: null,
+        });
+        message.success("Rezervācija veiksmīgi atcelta!");
+        // Update the rowData to reflect the change
+        setRowData((prevData) =>
+          prevData.map((reservation) =>
+            reservation.id === reservationId
+              ? { ...reservation, Status: "Atcelts", startDate: null, endDate: null }
+              : reservation
+          )
+        );
+      } else {
+        message.error("Rezervāciju nevar atcelt, jo tā jau ir sākusies");
+      }
+    } catch (error) {
+      console.error("Kļūda atceļot rezervāciju:", error);
+      message.error("Kļūda atceļot rezervāciju");
     }
   };
 
@@ -562,7 +623,7 @@ const OfferDetails = () => {
             ranges={selectedDates}
             minDate={new Date()}
             locale={lv}
-            disabledDates={getDisabledDates()}
+            disabledDates={getDisabledDates()} // Pass disabled dates to DateRange
           />
         </Grid>
       </Grid>
@@ -611,6 +672,7 @@ const OfferDetails = () => {
             variant="contained"
             color="secondary"
             onClick={handleReserveClick}
+            disabled={isButtonDisabled}
           >
             Rezervēt
           </Button>
@@ -764,7 +826,7 @@ const OfferDetails = () => {
         </Dialog>
       )}
 
-      {showChat && (
+      {showChat && (    
         <Chat ownerId={ownerId} onClose={() => setShowChat(false)} />
       )}
     </Box>

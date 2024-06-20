@@ -21,7 +21,9 @@ import CheckoutForm from "./components/CheckoutForm.js";
 import Bookingregister from "./Admin/BookingRegister.jsx";
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import Rezervacijas from "./components/Rezervacijas/Rezervacijas.jsx";
 import Chat from "./components/Chat/Chat.jsx";
+
 // Ваша публичная Stripe API ключ
 const stripePromise = loadStripe("pk_test_51ObI6xHCqLwHfBqfls20T9gJk1iPhhEwTjPGWsD11bMCbawy3u7ot4nl14ghADC10xxJzr1iq7T7uRI339nG9cU700H9NU3Dic");
 
@@ -112,12 +114,21 @@ function App() {
                   )
                 }
               />
-              
-              <Route
+                 <Route
                 path="/manasrezervacijas"
                 element={
                   userRole === "User" || userRole === "Admin" ? (
                     <Manasrezervacijas />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route
+                path="/Rezervacijas"
+                element={
+                  userRole === "User" || userRole === "Admin" ? (
+                    <Rezervacijas />
                   ) : (
                     <Navigate to="/login" />
                   )

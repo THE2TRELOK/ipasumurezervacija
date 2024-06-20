@@ -234,14 +234,9 @@ const UserRegister = () => {
         },
         { merge: true }
       ); // Use merge option to ensure that only provided fields are updated
-      message.success("Пользователь успешно обновлен");
+      message.success("Lietotajs veiksmigi rediģets");
     } catch (error) {
-      console.error(
-        "Ошибка обновления пользователя: ",
-        error.code,
-        error.message
-      );
-      message.error("Ошибка обновления пользователя");
+      message.error("Lietotaja rediģešanas");
     }
   };
 
